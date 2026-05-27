@@ -471,18 +471,18 @@ body.lang-en li[data-lang="en"] { display: list-item; }
       <div>
         <div class="text-xs font-semibold text-emerald-600 tracking-widest uppercase">Interactive Simulator</div>
         <h2 class="font-display text-2xl sm:text-3xl font-semibold text-slate-900">
-          <span data-lang="zh">幫學生找到心流區</span>
-          <span data-lang="en">Guide Students to the Flow Zone</span>
+          <span data-lang="zh">你能判斷他在哪個區嗎？</span>
+          <span data-lang="en">Can You Identify the Zone?</span>
         </h2>
       </div>
     </div>
-    <p class="text-sm text-slate-600 mb-6" data-lang="zh">每位學生都卡在「無聊」或「焦慮」區。拖動挑戰難度滑桿，把他們帶進 🌊 心流區，再按確認。</p>
-    <p class="text-sm text-slate-600 mb-6" data-lang="en">Each student is stuck in "boredom" or "anxiety." Drag the challenge slider to guide them into the 🌊 Flow Zone, then confirm.</p>
+    <p class="text-sm text-slate-600 mb-6" data-lang="zh">閱讀每個情境描述，用兩個滑桿評估「技能水準」與「挑戰難度」，再按送出——系統不會事先提示，送出後才揭曉你的判斷是否正確。</p>
+    <p class="text-sm text-slate-600 mb-6" data-lang="en">Read each scenario. Use two sliders to estimate skill level and challenge difficulty, then submit — no hints are shown until you submit.</p>
 
     <!-- Progress bar -->
     <div class="flex items-center gap-3 mb-8">
-      <span class="text-xs font-bold text-slate-500 tracking-widest uppercase w-10 shrink-0">
-        <span data-lang="zh">進度</span><span data-lang="en">Score</span>
+      <span class="text-xs font-bold text-slate-500 tracking-widest uppercase shrink-0">
+        <span data-lang="zh">判斷正確</span><span data-lang="en">Correct</span>
       </span>
       <div class="flex-1 h-2.5 bg-slate-200 rounded-full overflow-hidden">
         <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-500" style="width:0%"></div>
@@ -501,8 +501,8 @@ body.lang-en li[data-lang="en"] { display: list-item; }
         <span data-lang="zh">全部完成！</span>
         <span data-lang="en">All Done!</span>
       </h3>
-      <p class="text-slate-600 max-w-lg mx-auto mb-2 leading-relaxed" data-lang="zh">你成功為 10 位學生找到了心流區。這正是 Csikszentmihalyi（1990）的核心主張：<strong>心流不是固定的，而是需要動態調適的</strong>——每位學習者的「心流走廊」都在不同的位置。這也呼應周郁凱（2015）八角框架中的第 ② 核心驅力：進步感本身就是最強大的學習動機。</p>
-      <p class="text-slate-600 max-w-lg mx-auto mb-2 leading-relaxed" data-lang="en">You found the flow zone for all 10 students. This is Csikszentmihalyi's (1990) core claim: <strong>flow is not fixed — it must be dynamically calibrated</strong> — every learner's "flow corridor" sits at a different point. This echoes Yu-kai Chou's (2015) Core Drive ②: the sense of progress is itself the most powerful learning motivator.</p>
+      <p class="text-slate-600 max-w-lg mx-auto mb-2 leading-relaxed" data-lang="zh">你完成了全部 10 個情境的判斷。這個過程本身就是在練習心流理論的核心洞察：<strong>判斷一個學習情境的狀態，需要同時評估技能與挑戰兩個維度</strong>（Csikszentmihalyi, 1990）。判斷正確的題目代表你已能將理論應用到實際情境。</p>
+      <p class="text-slate-600 max-w-lg mx-auto mb-2 leading-relaxed" data-lang="en">You assessed all 10 scenarios. The process itself practises flow theory's core insight: <strong>judging a learning situation requires evaluating both skill and challenge simultaneously</strong> (Csikszentmihalyi, 1990). Correct assessments show you can apply the theory to real-world contexts.</p>
       <button onclick="resetSim()" class="mt-6 px-8 py-3 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold shadow-lg shadow-emerald-500/30 transition-all">
         <span data-lang="zh">↻ 再玩一次</span>
         <span data-lang="en">↻ Play Again</span>
@@ -704,7 +704,7 @@ const CASES = [
 ];
 
 // ── Simulator State ───────────────────────────────────────
-let sim = { idx: 0, challenge: CASES[0].startChallenge, completed: new Set(), solved: false };
+let sim = { idx: 0, userSkill: 5, userChallenge: 5, completed: new Set(), submitted: false };
 
 function getZone(skill, challenge) {
   const fMin = Math.max(1, skill - 1);
@@ -714,6 +714,34 @@ function getZone(skill, challenge) {
   return 'flow';
 }
 
+const ZONE_META = {
+  flow: {
+    emoji: '🌊',
+    label_zh: '心流狀態',    label_en: 'Flow State',
+    bg: 'bg-emerald-50 border-2 border-emerald-400',
+    badge: 'text-emerald-700 bg-emerald-100 border border-emerald-300',
+    desc_zh: '挑戰與技能恰好平衡，學習者能全神貫注、達到最佳學習投入（Csikszentmihalyi, 1990）。',
+    desc_en: 'Challenge and skill are well-matched — the learner achieves full focus and optimal engagement (Csikszentmihalyi, 1990).',
+  },
+  boredom: {
+    emoji: '😴',
+    label_zh: '無聊狀態',    label_en: 'Boredom',
+    bg: 'bg-blue-50 border-2 border-blue-300',
+    badge: 'text-blue-700 bg-blue-100 border border-blue-300',
+    desc_zh: '挑戰遠低於技能，學習者缺乏刺激、注意力渙散，心流無法發生。',
+    desc_en: 'Challenge is far below skill — the learner is under-stimulated and disengaged. No flow.',
+  },
+  anxiety: {
+    emoji: '😰',
+    label_zh: '焦慮狀態',    label_en: 'Anxiety',
+    bg: 'bg-red-50 border-2 border-red-300',
+    badge: 'text-red-700 bg-red-100 border border-red-300',
+    desc_zh: '挑戰遠超技能，學習者感到無所適從、喪失信心，心流無法發生。',
+    desc_en: 'Challenge far exceeds skill — the learner feels overwhelmed and loses confidence. No flow.',
+  },
+};
+
+// ── Render dispatcher ────────────────────────────────────
 function renderCase() {
   const card = document.getElementById('caseCard');
   if (sim.idx >= CASES.length) {
@@ -723,121 +751,208 @@ function renderCase() {
     return;
   }
   document.getElementById('completionScreen').classList.add('hidden');
-
   const c = CASES[sim.idx];
-  const zone = getZone(c.skill, sim.challenge);
-  const isFlow = zone === 'flow';
-
-  const fMin = Math.max(1, c.skill - 1);
-  const fMax = Math.min(10, c.skill + 2);
-  const borePct  = ((fMin - 1) / 9) * 100;
-  const flowPct  = ((fMax - fMin) / 9) * 100;
-  const anxPct   = ((10 - fMax)  / 9) * 100;
-  const needlePct = ((sim.challenge - 1) / 9) * 100;
-
-  const faceMap = {
-    boredom: sim.solved ? '🥳' : '😴',
-    flow:    sim.solved ? '🥳' : '🌊',
-    anxiety: sim.solved ? '🥳' : '😰',
-  };
-  const face = faceMap[zone];
-
-  const zoneLabel = {
-    zh: { boredom:'😴 無聊區', flow:'🌊 進入心流區！', anxiety:'😰 焦慮區' },
-    en: { boredom:'😴 Boredom Zone', flow:'🌊 In the Flow Zone!', anxiety:'😰 Anxiety Zone' },
-  }[LANG][zone];
-
-  const zoneColor = {
-    boredom: 'text-blue-700 bg-blue-100',
-    flow:    'text-emerald-700 bg-emerald-100',
-    anxiety: 'text-red-700 bg-red-100',
-  }[zone];
-
-  const cardBg = isFlow ? 'bg-emerald-50 border-2 border-emerald-300' : 'bg-slate-50 border-2 border-slate-200';
-
-  const isLast = sim.idx === CASES.length - 1;
-  const nextLabel = LANG==='zh' ? (isLast ? '🏆 查看最終結果' : '→ 下一位學生') : (isLast ? '🏆 See Final Results' : '→ Next Student');
-
-  card.innerHTML = `
-    <div class="grid md:grid-cols-2 gap-6">
-      <div class="flex flex-col items-center text-center p-6 rounded-2xl ${cardBg} transition-all duration-300">
-        <div class="char-face mb-3">${face}</div>
-        <div class="font-bold text-xl text-slate-900 mb-0.5">${LANG==='zh' ? c.name_zh : c.name_en}</div>
-        <div class="text-xs font-semibold text-slate-500 mb-3 tracking-wide">${LANG==='zh' ? c.subject_zh : c.subject_en}</div>
-        <p class="text-sm text-slate-600 leading-relaxed mb-4">${LANG==='zh' ? c.sit_zh : c.sit_en}</p>
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold ${zoneColor} transition-all duration-300">${zoneLabel}</div>
-        ${isFlow && !sim.solved ? `<div class="mt-4 text-xs text-emerald-700 bg-emerald-100/80 px-4 py-2 rounded-xl leading-relaxed">${LANG==='zh' ? c.hint_zh : c.hint_en}</div>` : ''}
-      </div>
-
-      <div class="flex flex-col justify-center gap-5">
-        <div>
-          <div class="flex justify-between items-center mb-2">
-            <span class="text-xs font-bold text-slate-500 tracking-widest uppercase">${LANG==='zh' ? '技能水準（固定）' : 'Skill Level (Fixed)'}</span>
-            <span class="text-sm font-bold text-indigo-600">${c.skill} / 10</span>
-          </div>
-          <div class="flex gap-1">
-            ${Array.from({length:10},(_,i)=>`<div class="flex-1 h-3 rounded-full ${i<c.skill?'bg-indigo-400':'bg-slate-200'}"></div>`).join('')}
-          </div>
-        </div>
-
-        <div>
-          <div class="flex justify-between items-center mb-2">
-            <span class="text-xs font-bold text-slate-500 tracking-widest uppercase">${LANG==='zh' ? '挑戰難度（你來調）' : 'Challenge Level (You Control)'}</span>
-            <span class="text-sm font-bold ${zone==='flow'?'text-emerald-600':zone==='boredom'?'text-blue-600':'text-red-600'}">${sim.challenge} / 10</span>
-          </div>
-          <input type="range" min="1" max="10" value="${sim.challenge}"
-            class="challenge-slider w-full"
-            oninput="onSlider(this.value)"
-            ${sim.solved ? 'disabled' : ''}
-          >
-        </div>
-
-        <div>
-          <div class="text-xs font-bold text-slate-500 mb-2 tracking-widest uppercase">${LANG==='zh' ? '心流地圖' : 'Flow Map'}</div>
-          <div class="zone-track">
-            ${borePct>0  ? `<div class="zone-seg zone-boring"  style="width:${borePct}%">${LANG==='zh'?'😴 無聊':'😴 Boring'}</div>` : ''}
-            <div class="zone-seg zone-flow" style="width:${flowPct}%">${LANG==='zh'?'🌊 心流':'🌊 Flow'}</div>
-            ${anxPct>0   ? `<div class="zone-seg zone-anxiety" style="width:${anxPct}%">${LANG==='zh'?'😰 焦慮':'😰 Anxiety'}</div>` : ''}
-            <div class="zone-needle" style="left:calc(${needlePct}% - 2px)"></div>
-          </div>
-          <div class="flex justify-between text-[10px] text-slate-400 mt-1 px-0.5">
-            <span>1</span><span>${LANG==='zh'?'← 太簡單 ／ 太難 →':'← Too easy ／ Too hard →'}</span><span>10</span>
-          </div>
-        </div>
-
-        ${isFlow && !sim.solved
-          ? `<button onclick="confirmFlow()" class="w-full py-3 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold shadow-lg shadow-emerald-500/30 transition-all">
-               ${LANG==='zh' ? '✓ 這就是心流區，確認！' : '✓ This is the Flow Zone — Confirm!'}
-             </button>`
-          : sim.solved
-          ? `<button onclick="nextCase()" class="w-full py-3 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-bold shadow-lg shadow-indigo-500/30 transition-all">
-               ${nextLabel}
-             </button>`
-          : ''
-        }
-      </div>
-    </div>`;
-
+  card.innerHTML = sim.submitted ? buildResultHTML(c) : buildInputHTML(c);
   updateProgress();
 }
 
-function onSlider(val) {
-  sim.challenge = parseInt(val);
-  sim.solved = false;
-  renderCase();
+// ── Input mode (before submit) ───────────────────────────
+function buildInputHTML(c) {
+  return `
+    <div class="mb-5 p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3">
+      <span class="text-xl mt-0.5 shrink-0">📋</span>
+      <p class="text-sm text-amber-900 leading-relaxed">
+        ${LANG==='zh'
+          ? '仔細閱讀以下情境，根據你的判斷拖動兩個滑桿，再按「送出評估」。送出前不會顯示任何提示。'
+          : 'Read the scenario carefully. Set both sliders based on your judgment, then click Submit — no hints until you do.'}
+      </p>
+    </div>
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- Scenario card -->
+      <div class="flex flex-col items-center text-center p-6 rounded-2xl bg-slate-50 border-2 border-slate-200">
+        <div class="char-face mb-3">${c.avatar}</div>
+        <div class="font-bold text-xl text-slate-900 mb-0.5">${LANG==='zh' ? c.name_zh : c.name_en}</div>
+        <div class="text-xs font-semibold text-slate-500 mb-3 tracking-wide">${LANG==='zh' ? c.subject_zh : c.subject_en}</div>
+        <p class="text-sm text-slate-600 leading-relaxed">${LANG==='zh' ? c.sit_zh : c.sit_en}</p>
+      </div>
+      <!-- Sliders -->
+      <div class="flex flex-col justify-center gap-6">
+        <div>
+          <div class="flex justify-between items-center mb-1.5">
+            <span class="text-sm font-bold text-indigo-700">
+              🎯 ${LANG==='zh' ? '我認為的技能水準' : 'My skill estimate'}
+            </span>
+            <span id="skillVal" class="text-lg font-bold text-indigo-600">${sim.userSkill} / 10</span>
+          </div>
+          <input type="range" min="1" max="10" value="${sim.userSkill}"
+            class="challenge-slider w-full"
+            style="background:linear-gradient(90deg,#a5b4fc,#6366f1)"
+            oninput="onSkillSlider(this.value)">
+          <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+            <span>${LANG==='zh' ? '完全不會' : 'Beginner'}</span>
+            <span>${LANG==='zh' ? '非常精通' : 'Expert'}</span>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between items-center mb-1.5">
+            <span class="text-sm font-bold text-orange-700">
+              ⚡ ${LANG==='zh' ? '我認為的挑戰難度' : 'My challenge estimate'}
+            </span>
+            <span id="challengeVal" class="text-lg font-bold text-orange-600">${sim.userChallenge} / 10</span>
+          </div>
+          <input type="range" min="1" max="10" value="${sim.userChallenge}"
+            class="challenge-slider w-full"
+            style="background:linear-gradient(90deg,#fed7aa,#f97316)"
+            oninput="onChallengeSlider(this.value)">
+          <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+            <span>${LANG==='zh' ? '非常簡單' : 'Very easy'}</span>
+            <span>${LANG==='zh' ? '極度困難' : 'Extremely hard'}</span>
+          </div>
+        </div>
+        <button onclick="submitAssessment()"
+          class="w-full py-3.5 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 hover:from-slate-800 hover:to-black text-white font-bold shadow-lg transition-all text-base">
+          ${LANG==='zh' ? '送出評估 →' : 'Submit Assessment →'}
+        </button>
+      </div>
+    </div>`;
 }
 
-function confirmFlow() {
-  sim.solved = true;
-  sim.completed.add(sim.idx);
+// ── Result mode (after submit) ───────────────────────────
+function buildResultHTML(c) {
+  const userZone    = getZone(sim.userSkill, sim.userChallenge);
+  const correctZone = getZone(c.skill, c.startChallenge);
+  const isCorrect   = userZone === correctZone;
+  const um = ZONE_META[userZone];
+  const cm = ZONE_META[correctZone];
+  const isLast = sim.idx === CASES.length - 1;
+
+  // Zone bar for user's assessment
+  const uFMin = Math.max(1, sim.userSkill - 1);
+  const uFMax = Math.min(10, sim.userSkill + 2);
+  const uBore = ((uFMin - 1) / 9) * 100;
+  const uFlow = ((uFMax - uFMin) / 9) * 100;
+  const uAnx  = ((10 - uFMax)  / 9) * 100;
+  const uNeedle = ((sim.userChallenge - 1) / 9) * 100;
+
+  // Zone bar for correct answer
+  const cFMin = Math.max(1, c.skill - 1);
+  const cFMax = Math.min(10, c.skill + 2);
+  const cBore = ((cFMin - 1) / 9) * 100;
+  const cFlow = ((cFMax - cFMin) / 9) * 100;
+  const cAnx  = ((10 - cFMax)  / 9) * 100;
+  const cNeedle = ((c.startChallenge - 1) / 9) * 100;
+
+  const nextLabel = LANG==='zh'
+    ? (isLast ? '🏆 查看最終結果' : '→ 下一個情境')
+    : (isLast ? '🏆 See Results' : '→ Next Scenario');
+
+  return `
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- Scenario + result badge -->
+      <div class="flex flex-col items-center text-center p-6 rounded-2xl ${um.bg} transition-all">
+        <div class="char-face mb-3">${userZone==='flow' ? '🥳' : um.emoji}</div>
+        <div class="font-bold text-xl text-slate-900 mb-0.5">${LANG==='zh' ? c.name_zh : c.name_en}</div>
+        <div class="text-xs font-semibold text-slate-500 mb-3 tracking-wide">${LANG==='zh' ? c.subject_zh : c.subject_en}</div>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">${LANG==='zh' ? c.sit_zh : c.sit_en}</p>
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold ${um.badge}">
+          ${um.emoji} ${LANG==='zh' ? um.label_zh : um.label_en}
+        </div>
+      </div>
+
+      <!-- Analysis panel -->
+      <div class="flex flex-col gap-4">
+
+        <!-- Your answer -->
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+          <div class="text-[10px] font-bold text-slate-400 tracking-widest uppercase mb-3">
+            ${LANG==='zh' ? '你的評估' : 'Your Assessment'}
+          </div>
+          <div class="flex gap-3 mb-3">
+            <div class="flex-1 text-center p-2 rounded-xl bg-indigo-50 border border-indigo-200">
+              <div class="text-[10px] text-indigo-500 font-semibold uppercase">${LANG==='zh' ? '技能水準' : 'Skill'}</div>
+              <div class="text-2xl font-bold text-indigo-700">${sim.userSkill}</div>
+            </div>
+            <div class="flex items-center text-slate-300 font-bold text-sm">vs</div>
+            <div class="flex-1 text-center p-2 rounded-xl bg-orange-50 border border-orange-200">
+              <div class="text-[10px] text-orange-500 font-semibold uppercase">${LANG==='zh' ? '挑戰難度' : 'Challenge'}</div>
+              <div class="text-2xl font-bold text-orange-700">${sim.userChallenge}</div>
+            </div>
+          </div>
+          <div class="zone-track mb-1">
+            ${uBore>0 ? `<div class="zone-seg zone-boring"  style="width:${uBore}%">😴</div>` : ''}
+            <div class="zone-seg zone-flow" style="width:${uFlow}%">🌊</div>
+            ${uAnx>0  ? `<div class="zone-seg zone-anxiety" style="width:${uAnx}%">😰</div>` : ''}
+            <div class="zone-needle" style="left:calc(${uNeedle}% - 2px)"></div>
+          </div>
+          <div class="text-xs font-semibold text-center mt-2 py-1 px-2 rounded-lg ${um.badge}">
+            → ${LANG==='zh' ? um.label_zh : um.label_en}
+          </div>
+        </div>
+
+        <!-- Correct answer reveal -->
+        <div class="p-4 rounded-2xl ${isCorrect ? 'bg-emerald-50 border-2 border-emerald-400' : 'bg-amber-50 border border-amber-300'}">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-base">${isCorrect ? '✅' : '💡'}</span>
+            <div class="text-xs font-bold tracking-widest uppercase ${isCorrect ? 'text-emerald-700' : 'text-amber-700'}">
+              ${LANG==='zh' ? (isCorrect ? '判斷正確！' : '參考解答') : (isCorrect ? 'Correct!' : 'Reference Answer')}
+            </div>
+          </div>
+          <div class="flex gap-3 mb-3">
+            <div class="flex-1 text-center p-2 rounded-xl bg-white border border-slate-200">
+              <div class="text-[10px] text-slate-400 font-semibold uppercase">${LANG==='zh' ? '技能水準' : 'Skill'}</div>
+              <div class="text-xl font-bold text-slate-700">${c.skill}</div>
+            </div>
+            <div class="flex items-center text-slate-300 font-bold text-sm">vs</div>
+            <div class="flex-1 text-center p-2 rounded-xl bg-white border border-slate-200">
+              <div class="text-[10px] text-slate-400 font-semibold uppercase">${LANG==='zh' ? '挑戰難度' : 'Challenge'}</div>
+              <div class="text-xl font-bold text-slate-700">${c.startChallenge}</div>
+            </div>
+          </div>
+          <div class="zone-track mb-2">
+            ${cBore>0 ? `<div class="zone-seg zone-boring"  style="width:${cBore}%">😴</div>` : ''}
+            <div class="zone-seg zone-flow" style="width:${cFlow}%">🌊</div>
+            ${cAnx>0  ? `<div class="zone-seg zone-anxiety" style="width:${cAnx}%">😰</div>` : ''}
+            <div class="zone-needle" style="left:calc(${cNeedle}% - 2px)"></div>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            ${LANG==='zh' ? cm.desc_zh : cm.desc_en}
+          </p>
+        </div>
+
+        <button onclick="nextCase()"
+          class="w-full py-3 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-bold shadow-lg shadow-indigo-500/30 transition-all">
+          ${nextLabel}
+        </button>
+      </div>
+    </div>`;
+}
+
+// ── Slider handlers (no full re-render — just update display) ──
+function onSkillSlider(val) {
+  sim.userSkill = parseInt(val);
+  const el = document.getElementById('skillVal');
+  if (el) el.textContent = sim.userSkill + ' / 10';
+}
+function onChallengeSlider(val) {
+  sim.userChallenge = parseInt(val);
+  const el = document.getElementById('challengeVal');
+  if (el) el.textContent = sim.userChallenge + ' / 10';
+}
+
+function submitAssessment() {
+  sim.submitted = true;
+  const userZone    = getZone(sim.userSkill, sim.userChallenge);
+  const correctZone = getZone(CASES[sim.idx].skill, CASES[sim.idx].startChallenge);
+  if (userZone === correctZone) sim.completed.add(sim.idx);
   renderCase();
 }
 
 function nextCase() {
   sim.idx++;
-  sim.solved = false;
+  sim.userSkill = 5;
+  sim.userChallenge = 5;
+  sim.submitted = false;
   if (sim.idx < CASES.length) {
-    sim.challenge = CASES[sim.idx].startChallenge;
     renderCase();
   } else {
     document.getElementById('caseCard').innerHTML = '';
@@ -845,13 +960,13 @@ function nextCase() {
     spawnConfetti();
   }
   updateProgress();
-  document.getElementById('sim-section').scrollIntoView({behavior:'smooth', block:'start'});
+  document.getElementById('sim-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function updateProgress() {
   const done = sim.completed.size;
-  document.getElementById('progressBar').style.width = (done/CASES.length*100)+'%';
-  document.getElementById('progressText').textContent = done+' / '+CASES.length;
+  document.getElementById('progressBar').style.width = (done / CASES.length * 100) + '%';
+  document.getElementById('progressText').textContent = done + ' / ' + CASES.length;
 }
 
 function spawnConfetti() {
@@ -859,7 +974,7 @@ function spawnConfetti() {
   if (!container) return;
   container.innerHTML = '';
   const colors = ['#10b981','#6366f1','#f59e0b','#ef4444','#3b82f6','#ec4899'];
-  for (let i=0; i<40; i++) {
+  for (let i = 0; i < 40; i++) {
     const el = document.createElement('div');
     el.className = 'confetti-piece';
     el.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*30}%;background:${colors[i%colors.length]};animation-delay:${Math.random()*.6}s;animation-duration:${.7+Math.random()*.6}s`;
@@ -868,7 +983,7 @@ function spawnConfetti() {
 }
 
 function resetSim() {
-  sim = { idx: 0, challenge: CASES[0].startChallenge, completed: new Set(), solved: false };
+  sim = { idx: 0, userSkill: 5, userChallenge: 5, completed: new Set(), submitted: false };
   document.getElementById('completionScreen').classList.add('hidden');
   renderCase();
 }
