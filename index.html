@@ -3,145 +3,111 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 動態調適模擬器 — Flow Tutor Lab</title>
-<meta name="description" content="心流理論互動教材：體驗 AI 如何為同一主題生成三種難度版本">
+<title>心流理論在學習中的應用 — 學習心理學期末報告</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Fraunces:opsz,wght@9..144,400;9..144,700&display=swap" rel="stylesheet">
 <style>
-  body {
-    font-family: 'Noto Sans TC', system-ui, sans-serif;
-    background:
-      radial-gradient(ellipse at top left, rgba(16, 185, 129, 0.08), transparent 50%),
-      radial-gradient(ellipse at bottom right, rgba(99, 102, 241, 0.08), transparent 50%),
-      linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-    min-height: 100vh;
-  }
-  .font-display { font-family: 'Fraunces', 'Noto Sans TC', serif; }
-  .glass {
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-  }
-  [data-lang] { display: none; }
-  body.lang-zh [data-lang="zh"] { display: revert; }
-  body.lang-en [data-lang="en"] { display: revert; }
-  span[data-lang], a[data-lang], em[data-lang], strong[data-lang] { display: none; }
-  body.lang-zh span[data-lang="zh"],
-  body.lang-zh em[data-lang="zh"],
-  body.lang-zh strong[data-lang="zh"],
-  body.lang-zh a[data-lang="zh"] { display: inline; }
-  body.lang-en span[data-lang="en"],
-  body.lang-en em[data-lang="en"],
-  body.lang-en strong[data-lang="en"],
-  body.lang-en a[data-lang="en"] { display: inline; }
+body {
+  font-family: 'Noto Sans TC', system-ui, sans-serif;
+  background: radial-gradient(ellipse at top left, rgba(16,185,129,.08), transparent 50%),
+              radial-gradient(ellipse at bottom right, rgba(99,102,241,.08), transparent 50%),
+              linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  min-height: 100vh;
+}
+.font-display { font-family: 'Fraunces', 'Noto Sans TC', serif; }
+.glass {
+  background: rgba(255,255,255,.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,.8);
+}
+[data-lang] { display: none; }
+body.lang-zh [data-lang="zh"] { display: revert; }
+body.lang-en [data-lang="en"] { display: revert; }
+span[data-lang], em[data-lang], strong[data-lang], p[data-lang], li[data-lang], cite[data-lang] { display: none; }
+body.lang-zh span[data-lang="zh"], body.lang-zh em[data-lang="zh"], body.lang-zh strong[data-lang="zh"] { display: inline; }
+body.lang-en span[data-lang="en"], body.lang-en em[data-lang="en"], body.lang-en strong[data-lang="en"] { display: inline; }
+body.lang-zh p[data-lang="zh"] { display: block; }
+body.lang-en p[data-lang="en"] { display: block; }
+body.lang-zh cite[data-lang="zh"] { display: block; }
+body.lang-en cite[data-lang="en"] { display: block; }
+body.lang-zh li[data-lang="zh"] { display: list-item; }
+body.lang-en li[data-lang="en"] { display: list-item; }
 
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up { animation: slideUp .55s ease-out forwards; }
 
-  @keyframes dotPulse {
-    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-    40% { transform: scale(1); opacity: 1; }
-  }
-  .loading-dot { animation: dotPulse 1.4s infinite ease-in-out; }
-  .loading-dot:nth-child(2) { animation-delay: 0.16s; }
-  .loading-dot:nth-child(3) { animation-delay: 0.32s; }
+.prose-flow { font-size: 16px; line-height: 1.85; color: #334155; }
+.prose-flow strong { color: #047857; font-weight: 600; }
 
-  .badge-easy { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
-  .badge-flow { background: linear-gradient(135deg, #10b981, #059669); }
-  .badge-hard { background: linear-gradient(135deg, #f97316, #ef4444); }
+.lang-switch { position: relative; display: inline-flex; background: rgba(15,23,42,.08); border-radius: 999px; padding: 3px; }
+.lang-switch button { position: relative; z-index: 1; padding: 5px 14px; border-radius: 999px; font-size: 13px; font-weight: 500; transition: color .3s; color: #64748b; }
+.lang-switch button.active { color: white; }
+.lang-switch .indicator {
+  position: absolute; top: 3px; bottom: 3px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 999px;
+  transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 4px 12px rgba(16,185,129,.4);
+}
 
-  .text-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-  .text-card:hover { transform: translateY(-4px); }
+/* Simulator */
+.zone-track { position: relative; height: 52px; border-radius: 14px; display: flex; overflow: hidden; }
+.zone-seg { display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; letter-spacing: .04em; white-space: nowrap; padding: 0 4px; }
+.zone-boring  { background: linear-gradient(135deg, #bfdbfe, #93c5fd); color: #1e40af; }
+.zone-flow    { background: linear-gradient(135deg, #6ee7b7, #10b981); color: #064e3b; }
+.zone-anxiety { background: linear-gradient(135deg, #fca5a5, #ef4444); color: #7f1d1d; }
+.zone-needle {
+  position: absolute; top: 4px; bottom: 4px; width: 4px;
+  background: white; border-radius: 2px;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.2);
+  transition: left .2s cubic-bezier(.34,1.56,.64,1);
+  pointer-events: none;
+}
 
-  .sam-btn { transition: all 0.2s; }
-  .sam-btn:hover { transform: scale(1.1); }
-  .sam-btn.selected {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: white;
-    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-  }
+.challenge-slider {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 8px; border-radius: 4px; outline: none; cursor: pointer;
+  background: linear-gradient(90deg, #bfdbfe 0%, #6ee7b7 45%, #fca5a5 100%);
+}
+.challenge-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: white; border: 3px solid #10b981; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(16,185,129,.4);
+  transition: transform .2s, border-color .2s;
+}
+.challenge-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+.challenge-slider:disabled { opacity: .5; cursor: not-allowed; }
 
-  .lang-switch {
-    position: relative;
-    display: inline-flex;
-    background: rgba(15, 23, 42, 0.08);
-    border-radius: 999px;
-    padding: 3px;
-  }
-  .lang-switch button {
-    position: relative;
-    z-index: 1;
-    padding: 5px 14px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 500;
-    transition: color 0.3s;
-    color: #64748b;
-  }
-  .lang-switch button.active { color: white; }
-  .lang-switch .indicator {
-    position: absolute;
-    top: 3px;
-    bottom: 3px;
-    background: linear-gradient(135deg, #10b981, #059669);
-    border-radius: 999px;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-  }
-
-  .prose-flow { font-size: 16px; line-height: 1.85; color: #334155; }
-  .prose-flow strong { color: #047857; font-weight: 600; }
-  .prose-flow em {
-    background: linear-gradient(180deg, transparent 60%, rgba(16, 185, 129, 0.2) 60%);
-    font-style: normal;
-    padding: 0 2px;
-  }
-
-  .step-dot { transition: all 0.4s; }
-  .step-dot.active {
-    background: #10b981;
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
-  }
-  .step-dot.done { background: #10b981; }
-
-  .topic-card {
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-    cursor: pointer;
-  }
-  .topic-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(16, 185, 129, 0.15);
-    border-color: #10b981;
-  }
-  .topic-card:hover .topic-icon {
-    transform: scale(1.15) rotate(-5deg);
-  }
-  .topic-icon { transition: all 0.3s; }
+.char-face { font-size: 68px; line-height: 1; transition: all .35s; }
+@keyframes bounce-in { 0%{transform:scale(.5);opacity:0} 60%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
+.bounce-in { animation: bounce-in .5s ease-out forwards; }
+@keyframes confetti-fall {
+  from { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  to   { transform: translateY(60px)  rotate(720deg); opacity: 0; }
+}
+.confetti-piece { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confetti-fall .9s ease-in forwards; pointer-events: none; }
 </style>
 </head>
 <body class="lang-zh">
 
+<!-- HEADER -->
 <header class="sticky top-0 z-50 glass border-b border-slate-200/50">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3 flex-wrap">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3 flex-wrap">
     <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
-        🌊
-      </div>
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-lg shadow-lg shadow-emerald-500/30">🌊</div>
       <div>
-        <div class="font-bold text-slate-800 text-sm sm:text-base leading-tight">
-          <span data-lang="zh">AI 動態調適模擬器</span>
-          <span data-lang="en">AI Adaptive Tutor Lab</span>
+        <div class="font-bold text-slate-800 text-sm leading-tight">
+          <span data-lang="zh">心流理論在學習中的應用</span>
+          <span data-lang="en">Flow Theory in Learning</span>
         </div>
-        <div class="text-[10px] sm:text-xs text-slate-500 leading-tight">
-          <span data-lang="zh">心流理論 · 互動體驗</span>
-          <span data-lang="en">Flow Theory · Interactive</span>
-        </div>
+        <div class="text-[10px] text-slate-500 leading-tight">廖常智 · 林鈺棠 · 學習心理學</div>
       </div>
     </div>
     <div class="lang-switch" id="langSwitch">
@@ -152,953 +118,594 @@
   </div>
 </header>
 
-<main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+<main class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
 
-  <!-- HERO -->
-  <section class="mb-10 sm:mb-16">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium mb-5">
-      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-      <span data-lang="zh">實驗 · 心流理論的當代實踐</span>
-      <span data-lang="en">Experiment · Flow Theory in Practice</span>
+<!-- ① COVER -->
+<section class="mb-16 text-center animate-slide-up">
+  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold mb-6">
+    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+    <span data-lang="zh">學習心理學 · 期末報告</span>
+    <span data-lang="en">Learning Psychology · Final Report</span>
+  </div>
+  <h1 class="font-display text-4xl sm:text-6xl font-bold text-slate-900 leading-tight mb-3">
+    <span data-lang="zh">心流理論<br><em class="text-emerald-600 italic font-light">在學習中的應用</em></span>
+    <span data-lang="en">Flow Theory<br><em class="text-emerald-600 italic font-light">in Learning</em></span>
+  </h1>
+  <p class="text-slate-500 text-sm mt-5 tracking-widest">廖常智 &nbsp;·&nbsp; 林鈺棠</p>
+  <div class="mt-10 flex flex-wrap justify-center gap-3 text-sm text-slate-600">
+    <div class="glass px-5 py-3 rounded-2xl flex items-center gap-2 shadow-sm">📖 <span data-lang="zh">三大理論</span><span data-lang="en">3 Theories</span></div>
+    <div class="glass px-5 py-3 rounded-2xl flex items-center gap-2 shadow-sm">🎮 <span data-lang="zh">互動模擬器</span><span data-lang="en">Interactive Sim</span></div>
+    <div class="glass px-5 py-3 rounded-2xl flex items-center gap-2 shadow-sm">📚 <span data-lang="zh">文獻佐證</span><span data-lang="en">References</span></div>
+  </div>
+</section>
+
+<!-- ② THEORY 01 : What is Flow -->
+<section class="mb-8">
+  <div class="glass rounded-3xl p-6 sm:p-10 shadow-xl shadow-emerald-500/5 animate-slide-up">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-600 text-xl">📖</div>
+      <div>
+        <div class="text-xs font-semibold text-emerald-600 tracking-widest uppercase">Theory · 01</div>
+        <h2 class="font-display text-2xl font-semibold text-slate-900">
+          <span data-lang="zh">什麼是心流？</span>
+          <span data-lang="en">What is Flow?</span>
+        </h2>
+      </div>
     </div>
+    <div class="prose-flow">
+      <p class="mb-4" data-lang="zh">1970 年代，心理學家 <strong>Mihaly Csikszentmihalyi</strong> 研究了一個弔詭現象：藝術家、棋手、外科醫師這些人，即使沒有任何外在酬賞，仍能長時間沉浸在高難度工作中，並感到深層的快樂。他在 <em>Beyond Boredom and Anxiety</em>（1975）將這種狀態命名為「<strong>autotelic experience</strong>」（自為目的的體驗），後來簡稱為 <strong>心流（Flow）</strong>。</p>
+      <p class="mb-4" data-lang="en">In the 1970s, psychologist <strong>Mihaly Csikszentmihalyi</strong> investigated a paradox: artists, chess players, and surgeons immersed themselves in demanding work for hours without any external reward, yet reported deep enjoyment. In <em>Beyond Boredom and Anxiety</em> (1975), he named this the "<strong>autotelic experience</strong>" — an activity pursued for its own sake — now universally called <strong>Flow</strong>.</p>
 
-    <h1 class="font-display text-4xl sm:text-6xl font-light text-slate-900 leading-tight mb-5 tracking-tight">
-      <span data-lang="zh">當挑戰<em class="font-medium text-emerald-600 italic">恰好超出</em>你的能力，<br>學習就變成一種<em class="font-medium text-emerald-600 italic">享受</em>。</span>
-      <span data-lang="en">When the challenge <em class="font-medium text-emerald-600 italic">just exceeds</em> your skill,<br>learning becomes an <em class="font-medium text-emerald-600 italic">enjoyment</em>.</span>
-    </h1>
+      <blockquote class="my-6 px-5 py-4 bg-gradient-to-br from-emerald-50 to-emerald-50/30 border-l-4 border-emerald-500 rounded-r-xl">
+        <p class="font-display italic text-lg sm:text-xl text-slate-800 mb-2 leading-relaxed" data-lang="zh">「享受出現在無聊與焦慮的邊界上——當挑戰恰好與行動者的能力匹配時。」</p>
+        <p class="font-display italic text-lg sm:text-xl text-slate-800 mb-2 leading-relaxed" data-lang="en">"Enjoyment appears at the boundary between boredom and anxiety, when the challenges are just balanced with the person's capacity to act."</p>
+        <cite class="text-xs text-emerald-700 font-bold tracking-wider not-italic" data-lang="zh">— Csikszentmihalyi（1990, p. 52）</cite>
+        <cite class="text-xs text-emerald-700 font-bold tracking-wider not-italic" data-lang="en">— Csikszentmihalyi (1990, p. 52)</cite>
+      </blockquote>
 
-    <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-3xl">
-      <span data-lang="zh">Csikszentmihalyi (1975) 觀察畫家、棋手、登山者——這些人即使沒有外在獎勵，仍能長時間沉浸於高難度活動。他發現一個共同條件：<strong class="text-emerald-700 font-semibold">挑戰恰好略高於技能</strong>。本實驗讓你親身體驗 AI 如何針對同一主題生成不同挑戰水準的教材，這是 50 年前 Csikszentmihalyi 無法做到的事——「動態調適」。</span>
-      <span data-lang="en">Csikszentmihalyi (1975) studied painters, chess players, and climbers — people who immersed themselves in difficult work without external reward. He found one shared condition: <strong class="text-emerald-700 font-semibold">challenge just slightly above skill</strong>. This lab lets you experience how AI can produce teaching material at varied challenge levels — something impossible 50 years ago when Csikszentmihalyi first wrote the theory.</span>
-    </p>
-  </section>
-
-  <!-- THEORY 01 -->
-  <section class="mb-8">
-    <div class="glass rounded-3xl p-6 sm:p-10 shadow-xl shadow-emerald-500/5 animate-slide-up">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-10 h-10 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-600 text-xl">📖</div>
-        <div>
-          <div class="text-xs font-semibold text-emerald-600 tracking-widest uppercase">Theory · 01</div>
-          <h2 class="font-display text-2xl font-medium text-slate-900">
-            <span data-lang="zh">心流的起點</span>
-            <span data-lang="en">The Origin of Flow</span>
-          </h2>
+      <div class="mt-2 mb-1 text-sm font-bold text-slate-700">
+        <span data-lang="zh">🎓 學習情境中的心流實例</span>
+        <span data-lang="en">🎓 Flow in Learning Contexts</span>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-3 mt-3">
+        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200/60">
+          <div class="text-2xl mb-2">💻</div>
+          <div class="text-xs font-semibold text-emerald-800 mb-1">
+            <span data-lang="zh">寫程式寫到忘記吃飯</span>
+            <span data-lang="en">Coding past midnight</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed" data-lang="zh">題目難度剛好在能力邊緣，解出來的瞬間大腦釋放多巴胺，完全忘記時間流逝。</p>
+          <p class="text-xs text-slate-600 leading-relaxed" data-lang="en">Problem at the exact edge of ability — solving it triggers dopamine. Time disappears entirely.</p>
+        </div>
+        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200/60">
+          <div class="text-2xl mb-2">🎸</div>
+          <div class="text-xs font-semibold text-emerald-800 mb-1">
+            <span data-lang="zh">練吉他不知不覺兩小時</span>
+            <span data-lang="en">Two hours of guitar — unnoticed</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed" data-lang="zh">曲子稍微超出當前技巧，每攻克一小節都有成就感，讓人想繼續練下去。</p>
+          <p class="text-xs text-slate-600 leading-relaxed" data-lang="en">Song slightly above current skill — each mastered bar feels like a win, pulling you forward.</p>
+        </div>
+        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200/60">
+          <div class="text-2xl mb-2">📐</div>
+          <div class="text-xs font-semibold text-emerald-800 mb-1">
+            <span data-lang="zh">數學解題進入隧道狀態</span>
+            <span data-lang="en">Deep focus on a math problem</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed" data-lang="zh">複雜但有跡可循的題目，讓思考完全集中在解題本身，外界聲音都消失了。</p>
+          <p class="text-xs text-slate-600 leading-relaxed" data-lang="en">Complex yet traceable — thinking is fully absorbed in the solution; the outside world fades.</p>
         </div>
       </div>
+    </div>
+  </div>
+</section>
 
+<!-- ③ THEORY 02 : Challenge–Skill Balance -->
+<section class="mb-8">
+  <div class="glass rounded-3xl p-6 sm:p-10 shadow-xl shadow-indigo-500/5 animate-slide-up">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600 text-xl">⚖️</div>
+      <div>
+        <div class="text-xs font-semibold text-indigo-600 tracking-widest uppercase">Theory · 02</div>
+        <h2 class="font-display text-2xl font-semibold text-slate-900">
+          <span data-lang="zh">心流的核心條件：挑戰—技能平衡</span>
+          <span data-lang="en">The Core Condition: Challenge–Skill Balance</span>
+        </h2>
+      </div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-8 items-center">
       <div class="prose-flow">
-        <p class="mb-4" data-lang="zh">
-          1970 年代，Mihaly Csikszentmihalyi 訪談數百位<strong>藝術家、外科醫師、棋手、登山者</strong>，他發現一個悖論：這些人從事極其困難的工作，卻在過程中體驗到深層的快樂。他在 <em>Beyond Boredom and Anxiety</em> (Csikszentmihalyi, 1975) 中將這種狀態命名為「<strong>autotelic experience</strong>」——活動本身即是目的。後來這個概念被簡化為一個詞：<strong>flow</strong>（心流）。
-        </p>
-        <p class="mb-4" data-lang="en">
-          In the 1970s, Mihaly Csikszentmihalyi interviewed hundreds of <strong>artists, surgeons, chess masters, and climbers</strong>, and discovered a paradox: these people pursued extraordinarily difficult work, yet reported deep enjoyment in the process. In <em>Beyond Boredom and Anxiety</em> (Csikszentmihalyi, 1975), he named this state the "<strong>autotelic experience</strong>" — an activity whose purpose lies within itself. Later, the concept was simplified into a single word: <strong>flow</strong>.
-        </p>
-
-        <blockquote class="my-6 px-6 py-5 bg-gradient-to-br from-emerald-50 to-emerald-50/30 border-l-4 border-emerald-500 rounded-r-xl">
-          <p class="font-display italic text-lg sm:text-xl text-slate-800 mb-3 leading-relaxed" data-lang="zh">
-            「享受出現在無聊與焦慮的邊界上——當挑戰恰好與行動者的能力匹配時。」
-          </p>
-          <p class="font-display italic text-lg sm:text-xl text-slate-800 mb-3 leading-relaxed" data-lang="en">
-            "Enjoyment appears at the boundary between boredom and anxiety, when the challenges are just balanced with the person's capacity to act."
-          </p>
-          <cite class="text-xs text-emerald-700 font-semibold tracking-wider not-italic">— Csikszentmihalyi (1990, p. 52)</cite>
-        </blockquote>
-      </div>
-    </div>
-  </section>
-
-  <!-- THEORY 02 -->
-  <section class="mb-8">
-    <div class="glass rounded-3xl p-6 sm:p-10 shadow-xl shadow-emerald-500/5 animate-slide-up">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-10 h-10 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-600 text-xl">⚖️</div>
-        <div>
-          <div class="text-xs font-semibold text-emerald-600 tracking-widest uppercase">Theory · 02</div>
-          <h2 class="font-display text-2xl font-medium text-slate-900">
-            <span data-lang="zh">挑戰—技能平衡</span>
-            <span data-lang="en">Challenge–Skill Balance</span>
-          </h2>
-        </div>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-6 sm:gap-8 items-center">
-        <div class="prose-flow">
-          <p class="mb-4" data-lang="zh">
-            心流的核心是<strong>挑戰</strong>與<strong>技能</strong>在主觀知覺上的對應 (Nakamura & Csikszentmihalyi, 2002)。Massimini 與 Carli (1988) 後來將二維平面細分為八個情緒區，但最常被引用的仍是兩個對角：
-          </p>
-          <p class="mb-4" data-lang="en">
-            At the heart of flow is the relationship between perceived <strong>challenge</strong> and perceived <strong>skill</strong> (Nakamura & Csikszentmihalyi, 2002). Massimini and Carli (1988) later refined this into an eight-channel model, though the two diagonal extremes remain most cited:
-          </p>
-          <div class="space-y-3 mt-5">
-            <div class="flex items-start gap-3 p-3 rounded-xl bg-red-50/60">
-              <span class="text-2xl">😰</span>
-              <div>
-                <div class="font-semibold text-red-700 text-sm">
-                  <span data-lang="zh">焦慮 ANXIETY</span>
-                  <span data-lang="en">ANXIETY</span>
-                </div>
-                <div class="text-xs text-slate-600 mt-1">
-                  <span data-lang="zh">挑戰過高 × 技能不足</span>
-                  <span data-lang="en">High challenge × insufficient skill</span>
-                </div>
-              </div>
-            </div>
-            <div class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50/60">
-              <span class="text-2xl">🌊</span>
-              <div>
-                <div class="font-semibold text-emerald-700 text-sm">
-                  <span data-lang="zh">心流 FLOW</span>
-                  <span data-lang="en">FLOW</span>
-                </div>
-                <div class="text-xs text-slate-600 mt-1">
-                  <span data-lang="zh">挑戰與技能恰好平衡，挑戰略高於技能</span>
-                  <span data-lang="en">Balanced, with challenge slightly above skill</span>
-                </div>
-              </div>
-            </div>
-            <div class="flex items-start gap-3 p-3 rounded-xl bg-blue-50/60">
-              <span class="text-2xl">😴</span>
-              <div>
-                <div class="font-semibold text-blue-700 text-sm">
-                  <span data-lang="zh">無聊 BOREDOM</span>
-                  <span data-lang="en">BOREDOM</span>
-                </div>
-                <div class="text-xs text-slate-600 mt-1">
-                  <span data-lang="zh">挑戰過低 × 技能過剩</span>
-                  <span data-lang="en">Low challenge × excess skill</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-gradient-to-br from-white to-slate-50 rounded-2xl p-4 sm:p-6 shadow-inner border border-slate-200/50">
-          <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg" class="w-full">
-            <defs>
-              <linearGradient id="anxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ef4444" stop-opacity="0.25"/>
-                <stop offset="100%" stop-color="#ef4444" stop-opacity="0.05"/>
-              </linearGradient>
-              <linearGradient id="flowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#10b981" stop-opacity="0.35"/>
-                <stop offset="100%" stop-color="#10b981" stop-opacity="0.15"/>
-              </linearGradient>
-              <linearGradient id="borGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.05"/>
-                <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.25"/>
-              </linearGradient>
-            </defs>
-            <polygon points="50,50 360,50 50,280" fill="url(#anxGrad)" />
-            <polygon points="360,50 360,280 50,280" fill="url(#borGrad)" />
-            <polygon points="50,90 320,280 360,280 360,240 90,50 50,50" fill="url(#flowGrad)" />
-            <line x1="50" y1="280" x2="360" y2="50" stroke="#10b981" stroke-width="2" stroke-dasharray="6 4" opacity="0.6"/>
-            <line x1="50" y1="50" x2="50" y2="280" stroke="#334155" stroke-width="1.5"/>
-            <line x1="50" y1="280" x2="360" y2="280" stroke="#334155" stroke-width="1.5"/>
-            <polygon points="50,48 46,58 54,58" fill="#334155"/>
-            <polygon points="362,280 352,276 352,284" fill="#334155"/>
-            <text x="60" y="42" fill="#475569" font-size="11" font-weight="600">CHALLENGE ↑</text>
-            <text x="356" y="305" fill="#475569" font-size="11" font-weight="600" text-anchor="end">SKILL →</text>
-            <text x="100" y="100" fill="#dc2626" font-size="16" font-style="italic" font-family="Fraunces" font-weight="500">ANXIETY</text>
-            <text x="180" y="170" fill="#047857" font-size="22" font-style="italic" font-family="Fraunces" font-weight="700">FLOW</text>
-            <text x="270" y="260" fill="#2563eb" font-size="16" font-style="italic" font-family="Fraunces" font-weight="500">BOREDOM</text>
-            <text x="80" y="125" font-size="22">😰</text>
-            <text x="190" y="200" font-size="26">🌊</text>
-            <text x="290" y="235" font-size="22">😴</text>
-          </svg>
-          <p class="text-xs text-center text-slate-500 mt-2 italic">
-            Csikszentmihalyi (1990); Nakamura & Csikszentmihalyi (2002)
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- THEORY 03 -->
-  <section class="mb-10">
-    <div class="rounded-3xl p-6 sm:p-10 shadow-xl shadow-indigo-500/10 bg-gradient-to-br from-indigo-600 via-indigo-700 to-emerald-700 text-white relative overflow-hidden animate-slide-up">
-      <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-      <div class="absolute bottom-0 left-0 w-48 h-48 bg-emerald-400/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
-
-      <div class="relative">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center text-xl">✨</div>
-          <div>
-            <div class="text-xs font-semibold text-emerald-200 tracking-widest uppercase">Theory · 03</div>
-            <h2 class="font-display text-2xl font-medium text-white">
-              <span data-lang="zh">為什麼要用 AI 來體驗?</span>
-              <span data-lang="en">Why use AI to experience this?</span>
-            </h2>
-          </div>
-        </div>
-
-        <p class="text-base sm:text-lg leading-relaxed text-white/90 mb-5" data-lang="zh">
-          Engeser 與 Rheinberg (2008) 的實證研究指出，挑戰—技能平衡的<strong class="text-emerald-200">動態性</strong>是心流發生的關鍵：當技能提升，挑戰也必須隨之上修，否則心流便會消逝。這正是傳統紙本教材的限制——一份學習單的難度是固定的，但人是會成長的。
-        </p>
-        <p class="text-base sm:text-lg leading-relaxed text-white/90 mb-5" data-lang="en">
-          Engeser and Rheinberg (2008) empirically showed that the <strong class="text-emerald-200">dynamic</strong> nature of the challenge–skill balance is critical: as skill grows, challenge must rise to match it, or flow dissolves. This is exactly where paper worksheets fail — a printed test has fixed difficulty, but learners do not.
-        </p>
-
-        <div class="bg-white/10 backdrop-blur rounded-2xl p-5 sm:p-6 border border-white/20">
-          <div class="flex items-start gap-3">
-            <span class="text-2xl">🎯</span>
+        <p class="mb-4" data-lang="zh">心流發生的核心條件是：<strong>挑戰略高於技能</strong>。Nakamura 與 Csikszentmihalyi（2002）指出，這種主觀感知上的「剛好」是心流的觸發點。任務太簡單令人無聊，太困難令人焦慮，只有落在那條「恰好的走廊」上，心流才會出現。</p>
+        <p class="mb-4" data-lang="en">The core condition for flow is: <strong>challenge slightly above skill</strong>. Nakamura and Csikszentmihalyi (2002) showed this subjective "just right" is the trigger. Tasks too easy produce boredom; tasks too hard produce anxiety. Only in the narrow corridor between them does flow emerge.</p>
+        <div class="space-y-3 mt-2">
+          <div class="flex items-start gap-3 p-3 rounded-xl bg-blue-50 border border-blue-100">
+            <span class="text-2xl mt-0.5">😴</span>
             <div>
-              <div class="text-sm font-bold text-emerald-200 tracking-wider mb-2">
-                <span data-lang="zh">這次實驗的核心問題</span>
-                <span data-lang="en">The core question</span>
+              <div class="font-semibold text-blue-700 text-sm">
+                <span data-lang="zh">無聊：挑戰 ＜ 技能</span>
+                <span data-lang="en">Boredom: Challenge &lt; Skill</span>
               </div>
-              <p class="text-white/95 leading-relaxed" data-lang="zh">
-                同一個主題用三種難度呈現給你——你能否親身感受到，<em class="not-italic text-emerald-200 font-medium">心流不是教材的屬性，而是教材與學習者之間的關係</em>？
-              </p>
-              <p class="text-white/95 leading-relaxed" data-lang="en">
-                Three difficulty versions of the same topic — can you personally feel that <em class="not-italic text-emerald-200 font-medium">flow is not a property of the material, but of the relationship between material and learner</em>?
-              </p>
+              <p class="text-xs text-slate-600 mt-1" data-lang="zh">例：精通四則運算的學生，仍在做個位數加法練習題</p>
+              <p class="text-xs text-slate-600 mt-1" data-lang="en">e.g. Student who mastered arithmetic is still doing 1+1 drills</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+            <span class="text-2xl mt-0.5">🌊</span>
+            <div>
+              <div class="font-semibold text-emerald-700 text-sm">
+                <span data-lang="zh">心流：挑戰略高於技能</span>
+                <span data-lang="en">Flow: Challenge slightly above Skill</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1" data-lang="zh">例：會寫迴圈的學生，開始接觸遞迴的基本概念</p>
+              <p class="text-xs text-slate-600 mt-1" data-lang="en">e.g. Student who knows loops just starting to learn basic recursion</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-3 rounded-xl bg-red-50 border border-red-100">
+            <span class="text-2xl mt-0.5">😰</span>
+            <div>
+              <div class="font-semibold text-red-700 text-sm">
+                <span data-lang="zh">焦慮：挑戰 ＞＞ 技能</span>
+                <span data-lang="en">Anxiety: Challenge &gt;&gt; Skill</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1" data-lang="zh">例：學程式一週的新手，被要求直接開發完整的 Web 應用程式</p>
+              <p class="text-xs text-slate-600 mt-1" data-lang="en">e.g. One-week beginner asked to build a full web application from scratch</p>
             </div>
           </div>
         </div>
+      </div>
+      <!-- SVG Chart -->
+      <div class="bg-gradient-to-br from-white to-slate-50 rounded-2xl p-4 sm:p-6 shadow-inner border border-slate-200/50">
+        <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <defs>
+            <linearGradient id="anxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ef4444" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#ef4444" stop-opacity="0.05"/>
+            </linearGradient>
+            <linearGradient id="flowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#10b981" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#10b981" stop-opacity="0.15"/>
+            </linearGradient>
+            <linearGradient id="borGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.05"/>
+              <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.25"/>
+            </linearGradient>
+          </defs>
+          <polygon points="50,50 360,50 50,280" fill="url(#anxGrad)"/>
+          <polygon points="360,50 360,280 50,280" fill="url(#borGrad)"/>
+          <polygon points="50,90 320,280 360,280 360,240 90,50 50,50" fill="url(#flowGrad)"/>
+          <line x1="50" y1="280" x2="360" y2="50" stroke="#10b981" stroke-width="2" stroke-dasharray="6 4" opacity="0.6"/>
+          <line x1="50" y1="50" x2="50" y2="280" stroke="#334155" stroke-width="1.5"/>
+          <line x1="50" y1="280" x2="360" y2="280" stroke="#334155" stroke-width="1.5"/>
+          <polygon points="50,48 46,58 54,58" fill="#334155"/>
+          <polygon points="362,280 352,276 352,284" fill="#334155"/>
+          <text x="60" y="42" fill="#475569" font-size="11" font-weight="600">CHALLENGE ↑</text>
+          <text x="356" y="305" fill="#475569" font-size="11" font-weight="600" text-anchor="end">SKILL →</text>
+          <text x="95" y="100" fill="#dc2626" font-size="15" font-style="italic" font-family="Fraunces" font-weight="500">ANXIETY</text>
+          <text x="175" y="172" fill="#047857" font-size="22" font-style="italic" font-family="Fraunces" font-weight="700">FLOW</text>
+          <text x="265" y="258" fill="#2563eb" font-size="15" font-style="italic" font-family="Fraunces" font-weight="500">BOREDOM</text>
+          <text x="78" y="128" font-size="22">😰</text>
+          <text x="188" y="202" font-size="26">🌊</text>
+          <text x="288" y="238" font-size="22">😴</text>
+        </svg>
+        <p class="text-xs text-center text-slate-500 mt-1 italic">Csikszentmihalyi (1990); Nakamura &amp; Csikszentmihalyi (2002)</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- LAB -->
-  <section class="mb-10" id="lab-section">
-    <div class="glass rounded-3xl p-6 sm:p-10 shadow-2xl shadow-emerald-500/10 animate-slide-up border-2 border-emerald-200/40">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-5 border-b border-slate-200">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-2xl shadow-lg shadow-emerald-500/30">🧪</div>
-          <div>
-            <div class="text-xs font-semibold text-emerald-600 tracking-widest uppercase">Interactive Lab</div>
-            <h2 class="font-display text-2xl sm:text-3xl font-semibold text-slate-900">
-              <span data-lang="zh">AI 動態調適模擬器</span>
-              <span data-lang="en">AI Adaptive Tutor</span>
-            </h2>
-          </div>
-        </div>
-        <div class="flex items-center gap-2 text-xs text-slate-500">
-          <span class="step-dot w-3 h-3 rounded-full bg-slate-300 active" id="dot-1"></span>
-          <span class="w-6 h-px bg-slate-300"></span>
-          <span class="step-dot w-3 h-3 rounded-full bg-slate-300" id="dot-2"></span>
-          <span class="w-6 h-px bg-slate-300"></span>
-          <span class="step-dot w-3 h-3 rounded-full bg-slate-300" id="dot-3"></span>
-        </div>
-      </div>
-
-      <!-- STEP 1: TOPIC SELECT -->
-      <div id="step-input" class="step-panel">
-        <div class="text-center mb-8">
-          <div class="text-5xl mb-4">📚</div>
-          <h3 class="font-display text-xl sm:text-2xl font-semibold text-slate-900 mb-3">
-            <span data-lang="zh">第一步 · 選一個你想學的主題</span>
-            <span data-lang="en">Step 1 · Choose a topic to explore</span>
-          </h3>
-          <p class="text-sm sm:text-base text-slate-600 max-w-xl mx-auto leading-relaxed">
-            <span data-lang="zh">建議選擇你「有點熟悉、但不算精通」的主題，三個難度版本的對比效果最明顯。</span>
-            <span data-lang="en">Pick a topic you are somewhat familiar with but not fully mastered — the contrast among versions will be most vivid.</span>
-          </p>
-        </div>
-
-        <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4" id="topicGrid">
-          <!-- 由 JS 注入 -->
-        </div>
-      </div>
-
-      <!-- STEP 2: LOADING -->
-      <div id="step-loading" class="step-panel hidden">
-        <div class="py-16 text-center">
-          <div class="inline-flex items-center gap-2 mb-6">
-            <span class="loading-dot w-3 h-3 bg-emerald-500 rounded-full"></span>
-            <span class="loading-dot w-3 h-3 bg-emerald-500 rounded-full"></span>
-            <span class="loading-dot w-3 h-3 bg-emerald-500 rounded-full"></span>
-          </div>
-          <h3 class="font-display text-xl font-semibold text-slate-900 mb-3">
-            <span data-lang="zh">AI 正在為「<span id="loadingTopicZh"></span>」生成三個難度版本...</span>
-            <span data-lang="en">AI is preparing three difficulty versions of "<span id="loadingTopicEn"></span>"...</span>
-          </h3>
-          <p class="text-sm text-slate-500 mb-8" id="loadingStatus">—</p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
-            <div class="p-4 rounded-2xl bg-blue-50 border-2 border-dashed border-blue-200">
-              <div class="text-3xl mb-2">😴</div>
-              <div class="text-xs font-semibold text-blue-700 tracking-wide">
-                <span data-lang="zh">無聊版本</span>
-                <span data-lang="en">Easy version</span>
-              </div>
-              <div class="h-2 bg-blue-200/50 rounded-full mt-3 overflow-hidden">
-                <div class="h-full bg-blue-500 rounded-full" id="bar-easy" style="width:0%; transition: width 0.5s;"></div>
-              </div>
-            </div>
-            <div class="p-4 rounded-2xl bg-emerald-50 border-2 border-dashed border-emerald-300">
-              <div class="text-3xl mb-2">🌊</div>
-              <div class="text-xs font-semibold text-emerald-700 tracking-wide">
-                <span data-lang="zh">心流版本</span>
-                <span data-lang="en">Flow version</span>
-              </div>
-              <div class="h-2 bg-emerald-200/50 rounded-full mt-3 overflow-hidden">
-                <div class="h-full bg-emerald-500 rounded-full" id="bar-flow" style="width:0%; transition: width 0.5s;"></div>
-              </div>
-            </div>
-            <div class="p-4 rounded-2xl bg-orange-50 border-2 border-dashed border-orange-200">
-              <div class="text-3xl mb-2">😰</div>
-              <div class="text-xs font-semibold text-orange-700 tracking-wide">
-                <span data-lang="zh">焦慮版本</span>
-                <span data-lang="en">Hard version</span>
-              </div>
-              <div class="h-2 bg-orange-200/50 rounded-full mt-3 overflow-hidden">
-                <div class="h-full bg-orange-500 rounded-full" id="bar-hard" style="width:0%; transition: width 0.5s;"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 3: READ & RATE -->
-      <div id="step-experience" class="step-panel hidden">
-        <div class="text-center mb-6">
-          <h3 class="font-display text-xl sm:text-2xl font-semibold text-slate-900 mb-3">
-            <span data-lang="zh">第二步 · 閱讀三個版本，給每個評分</span>
-            <span data-lang="en">Step 2 · Read all three versions, rate each</span>
-          </h3>
-          <p class="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            <span data-lang="zh">下列三段文本講述<strong class="text-emerald-700">完全相同的主題</strong>，但刻意調整了挑戰水準。請依序閱讀，並依你的<strong class="text-emerald-700">主觀感受</strong>給出 1–9 分（1=完全無聊　·　5=剛剛好　·　9=非常焦慮）。</span>
-            <span data-lang="en">All three texts describe the <strong class="text-emerald-700">same topic</strong>, but at different challenge levels. Read each, then rate by your <strong class="text-emerald-700">subjective experience</strong> (1=totally bored · 5=just right · 9=very anxious).</span>
-          </p>
-        </div>
-
-        <div id="textCards" class="space-y-5 mb-8"></div>
-
-        <div class="text-center">
-          <button id="seeResultBtn" onclick="showResults()" disabled
-            class="px-8 py-3.5 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-medium shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-            <span data-lang="zh">查看你的心流剖面 →</span>
-            <span data-lang="en">View Your Flow Profile →</span>
-          </button>
-          <p class="text-xs text-slate-400 mt-3" id="rateHint">
-            <span data-lang="zh">完成全部三個評分後即可查看結果</span>
-            <span data-lang="en">Complete all three ratings to continue</span>
-          </p>
-        </div>
-      </div>
-
-      <!-- STEP 4: RESULT -->
-      <div id="step-result" class="step-panel hidden">
-        <div class="text-center mb-8">
-          <div class="text-5xl mb-3">📊</div>
-          <h3 class="font-display text-2xl sm:text-3xl font-semibold text-slate-900 mb-3">
-            <span data-lang="zh">你的心流剖面</span>
-            <span data-lang="en">Your Flow Profile</span>
-          </h3>
-          <p class="text-sm text-slate-600 max-w-xl mx-auto" id="resultSubtitle">—</p>
-        </div>
-
-        <div class="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-5 sm:p-8 shadow-inner border border-slate-200/50 mb-6">
-          <div class="text-xs font-semibold text-slate-500 tracking-widest uppercase mb-4 text-center">
-            <span data-lang="zh">你的主觀感受 vs. 設定難度</span>
-            <span data-lang="en">Your subjective rating vs. designed difficulty</span>
-          </div>
-          <div class="space-y-5" id="resultBars"></div>
-        </div>
-
-        <div class="bg-gradient-to-br from-emerald-50 via-emerald-50/50 to-indigo-50/50 rounded-2xl p-5 sm:p-8 border border-emerald-200/50 mb-6">
-          <div class="flex items-start gap-3">
-            <span class="text-2xl">🔍</span>
-            <div class="flex-1">
-              <div class="text-xs font-semibold text-emerald-700 tracking-widest uppercase mb-3">
-                <span data-lang="zh">教學心理學解讀</span>
-                <span data-lang="en">Pedagogical Interpretation</span>
-              </div>
-              <div class="font-display text-base sm:text-lg leading-relaxed text-slate-800" id="interpretation">—</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="text-center">
-          <button onclick="resetLab()"
-            class="px-8 py-3 rounded-2xl bg-white hover:bg-slate-50 border-2 border-slate-200 hover:border-emerald-400 text-slate-700 hover:text-emerald-700 font-medium transition-all">
-            <span data-lang="zh">↻ 換一個主題再試</span>
-            <span data-lang="en">↻ Try another topic</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TEACHING REFLECTION -->
-  <section class="mb-10">
-    <div class="glass rounded-3xl p-6 sm:p-10 shadow-xl shadow-emerald-500/5 animate-slide-up">
+<!-- ④ THEORY 03 : Applications in Learning -->
+<section class="mb-8">
+  <div class="rounded-3xl p-6 sm:p-10 shadow-xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-emerald-700 text-white relative overflow-hidden animate-slide-up">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+    <div class="absolute bottom-0 left-0 w-48 h-48 bg-emerald-400/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+    <div class="relative">
       <div class="flex items-center gap-3 mb-6">
-        <div class="w-10 h-10 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-600 text-xl">💡</div>
+        <div class="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center text-xl">✨</div>
         <div>
-          <div class="text-xs font-semibold text-emerald-600 tracking-widest uppercase">Teaching Reflection</div>
-          <h2 class="font-display text-2xl font-medium text-slate-900">
-            <span data-lang="zh">給教學設計者的啟示</span>
-            <span data-lang="en">Implications for Instructional Designers</span>
+          <div class="text-xs font-semibold text-emerald-200 tracking-widest uppercase">Theory · 03</div>
+          <h2 class="font-display text-2xl font-semibold text-white">
+            <span data-lang="zh">心流理論在學習中的應用</span>
+            <span data-lang="en">Applying Flow Theory in Learning</span>
           </h2>
         </div>
       </div>
-
       <div class="grid sm:grid-cols-3 gap-4">
-        <div class="p-5 rounded-2xl bg-emerald-50/60 border border-emerald-200/50">
+        <div class="bg-white/10 backdrop-blur rounded-2xl p-5 border border-white/20">
           <div class="text-3xl mb-3">🎯</div>
-          <div class="font-semibold text-emerald-800 mb-2 text-sm">
-            <span data-lang="zh">心流不是教材的屬性</span>
-            <span data-lang="en">Flow is not a property of materials</span>
+          <div class="font-bold text-emerald-200 text-sm mb-2">
+            <span data-lang="zh">教師任務設計</span>
+            <span data-lang="en">Instructional Task Design</span>
           </div>
-          <p class="text-sm text-slate-700 leading-relaxed">
-            <span data-lang="zh">同一份教材，對甲是無聊、對乙是心流、對丙是焦慮。心流是教材與學習者之間的「關係」(Csikszentmihalyi, 1990)。</span>
-            <span data-lang="en">The same material may be boring for A, flow for B, anxiety for C. Flow is a <em>relation</em> between material and learner (Csikszentmihalyi, 1990).</span>
-          </p>
+          <p class="text-white/90 text-xs leading-relaxed" data-lang="zh">教師需為不同程度學生設計差異化任務，讓挑戰略高於每人的技能。Vygotsky（1978）的近側發展區（ZPD）提供了相同邏輯：學習應發生在「已能獨力完成」與「完全無法完成」之間的走廊裡。</p>
+          <p class="text-white/90 text-xs leading-relaxed" data-lang="en">Teachers must design differentiated tasks — challenge just above each student's skill. Vygotsky's (1978) Zone of Proximal Development offers the same logic: learning belongs in the corridor between "already can" and "completely impossible."</p>
         </div>
-        <div class="p-5 rounded-2xl bg-indigo-50/60 border border-indigo-200/50">
+        <div class="bg-white/10 backdrop-blur rounded-2xl p-5 border border-white/20">
           <div class="text-3xl mb-3">⚙️</div>
-          <div class="font-semibold text-indigo-800 mb-2 text-sm">
-            <span data-lang="zh">AI 的真正價值：即時調適</span>
-            <span data-lang="en">AI's true value: real-time adaptation</span>
+          <div class="font-bold text-emerald-200 text-sm mb-2">
+            <span data-lang="zh">AI 自適應學習</span>
+            <span data-lang="en">AI Adaptive Learning</span>
           </div>
-          <p class="text-sm text-slate-700 leading-relaxed">
-            <span data-lang="zh">AI 不只是「產生內容更快」，而是讓「動態挑戰—技能對應」(Engeser & Rheinberg, 2008) 在每位學生身上成為可能。</span>
-            <span data-lang="en">AI's value is not just speed, but enabling dynamic challenge–skill matching (Engeser & Rheinberg, 2008) for every learner.</span>
-          </p>
+          <p class="text-white/90 text-xs leading-relaxed" data-lang="zh">Engeser 與 Rheinberg（2008）指出，心流的維持依賴挑戰與技能的<strong class="text-emerald-200">動態對應</strong>。技能提升後挑戰也必須隨之調整。AI 能即時偵測學習者狀態，動態調整題目難度，實現持續心流。</p>
+          <p class="text-white/90 text-xs leading-relaxed" data-lang="en">Engeser &amp; Rheinberg (2008) showed flow requires <strong class="text-emerald-200">dynamic matching</strong>: as skill grows, challenge must rise. AI can detect learner state in real time and adjust difficulty dynamically — enabling sustained flow.</p>
         </div>
-        <div class="p-5 rounded-2xl bg-amber-50/60 border border-amber-200/50">
-          <div class="text-3xl mb-3">🌊</div>
-          <div class="font-semibold text-amber-800 mb-2 text-sm">
-            <span data-lang="zh">「剛剛好略高」是黃金法則</span>
-            <span data-lang="en">"Just slightly above" is the golden rule</span>
+        <div class="bg-white/10 backdrop-blur rounded-2xl p-5 border border-white/20">
+          <div class="text-3xl mb-3">🕹️</div>
+          <div class="font-bold text-emerald-200 text-sm mb-2">
+            <span data-lang="zh">遊戲化學習設計</span>
+            <span data-lang="en">Gamification in Education</span>
           </div>
-          <p class="text-sm text-slate-700 leading-relaxed">
-            <span data-lang="zh">這也呼應 Vygotsky 的近側發展區 (ZPD)。教學設計的核心，是把學生帶到「能力邊緣的下一步」。</span>
-            <span data-lang="en">This echoes Vygotsky's Zone of Proximal Development. The core of instruction is bringing learners to the next step beyond their current edge.</span>
-          </p>
+          <p class="text-white/90 text-xs leading-relaxed" data-lang="zh">電動遊戲是心流設計的大師：關卡難度隨技能成長而提升，即時回饋讓玩家精準知道自己的位置。學習設計借鑒這一模式——短循環、即時反饋、逐步提升——正是心流理論的直接實踐（Malone, 1981）。</p>
+          <p class="text-white/90 text-xs leading-relaxed" data-lang="en">Video games are masters of flow design: difficulty rises with skill, instant feedback tells players exactly where they stand. Education can borrow this model — short cycles, immediate feedback, gradual escalation — a direct application of flow theory (Malone, 1981).</p>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- REFERENCES -->
-  <section class="mb-10">
-    <div class="glass rounded-3xl p-6 sm:p-10 shadow-xl shadow-emerald-500/5 animate-slide-up">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-600 text-xl">📚</div>
-        <div>
-          <div class="text-xs font-semibold text-slate-600 tracking-widest uppercase">References</div>
-          <h2 class="font-display text-2xl font-medium text-slate-900">
-            <span data-lang="zh">參考文獻</span>
-            <span data-lang="en">References</span>
-          </h2>
-        </div>
+<!-- ⑤ SIMULATOR -->
+<section class="mb-10" id="sim-section">
+  <div class="glass rounded-3xl p-6 sm:p-10 shadow-2xl shadow-emerald-500/10 border-2 border-emerald-200/40">
+    <div class="flex items-center gap-3 mb-2">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-2xl shadow-lg shadow-emerald-500/30">🎮</div>
+      <div>
+        <div class="text-xs font-semibold text-emerald-600 tracking-widest uppercase">Interactive Simulator</div>
+        <h2 class="font-display text-2xl sm:text-3xl font-semibold text-slate-900">
+          <span data-lang="zh">幫學生找到心流區</span>
+          <span data-lang="en">Guide Students to the Flow Zone</span>
+        </h2>
       </div>
-
-      <ol class="space-y-4 text-sm text-slate-600 leading-relaxed">
-        <li class="pl-6 -indent-6 pb-4 border-b border-slate-200/50">
-          <span class="text-slate-900 font-medium">Csikszentmihalyi, M.</span> (1975). <em class="text-slate-800">Beyond boredom and anxiety: Experiencing flow in work and play.</em> San Francisco: Jossey-Bass.
-        </li>
-        <li class="pl-6 -indent-6 pb-4 border-b border-slate-200/50">
-          <span class="text-slate-900 font-medium">Csikszentmihalyi, M.</span> (1990). <em class="text-slate-800">Flow: The psychology of optimal experience.</em> New York: Harper & Row.
-        </li>
-        <li class="pl-6 -indent-6 pb-4 border-b border-slate-200/50">
-          <span class="text-slate-900 font-medium">Csikszentmihalyi, M., & LeFevre, J.</span> (1989). Optimal experience in work and leisure. <em class="text-slate-800">Journal of Personality and Social Psychology, 56</em>(5), 815–822. https://doi.org/10.1037/0022-3514.56.5.815
-        </li>
-        <li class="pl-6 -indent-6 pb-4 border-b border-slate-200/50">
-          <span class="text-slate-900 font-medium">Engeser, S., & Rheinberg, F.</span> (2008). Flow, performance and moderators of challenge-skill balance. <em class="text-slate-800">Motivation and Emotion, 32</em>(3), 158–172. https://doi.org/10.1007/s11031-008-9102-4
-        </li>
-        <li class="pl-6 -indent-6 pb-4 border-b border-slate-200/50">
-          <span class="text-slate-900 font-medium">Massimini, F., & Carli, M.</span> (1988). The systematic assessment of flow in daily experience. In M. Csikszentmihalyi & I. S. Csikszentmihalyi (Eds.), <em class="text-slate-800">Optimal experience: Psychological studies of flow in consciousness</em> (pp. 266–287). Cambridge University Press.
-        </li>
-        <li class="pl-6 -indent-6">
-          <span class="text-slate-900 font-medium">Nakamura, J., & Csikszentmihalyi, M.</span> (2002). The concept of flow. In C. R. Snyder & S. J. Lopez (Eds.), <em class="text-slate-800">Handbook of positive psychology</em> (pp. 89–105). Oxford University Press.
-        </li>
-      </ol>
     </div>
-  </section>
+    <p class="text-sm text-slate-600 mb-6" data-lang="zh">每位學生都卡在「無聊」或「焦慮」區。拖動挑戰難度滑桿，把他們帶進 🌊 心流區，再按確認。</p>
+    <p class="text-sm text-slate-600 mb-6" data-lang="en">Each student is stuck in "boredom" or "anxiety." Drag the challenge slider to guide them into the 🌊 Flow Zone, then confirm.</p>
 
-  <footer class="text-center text-xs text-slate-400 py-8">
-    <p data-lang="zh">本實驗為教學示範 · 資料僅儲存於本地瀏覽器 · 不會上傳</p>
-    <p data-lang="en">Teaching demonstration · Data stored locally · Nothing uploaded</p>
-  </footer>
+    <!-- Progress bar -->
+    <div class="flex items-center gap-3 mb-8">
+      <span class="text-xs font-bold text-slate-500 tracking-widest uppercase w-10 shrink-0">
+        <span data-lang="zh">進度</span><span data-lang="en">Score</span>
+      </span>
+      <div class="flex-1 h-2.5 bg-slate-200 rounded-full overflow-hidden">
+        <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-500" style="width:0%"></div>
+      </div>
+      <span id="progressText" class="text-sm font-bold text-emerald-600 w-10 text-right shrink-0">0 / 5</span>
+    </div>
+
+    <!-- Case rendered here -->
+    <div id="caseCard"></div>
+
+    <!-- Completion screen -->
+    <div id="completionScreen" class="hidden text-center py-12 relative overflow-hidden">
+      <div id="confettiContainer" class="absolute inset-0 pointer-events-none"></div>
+      <div class="text-7xl mb-4">🏆</div>
+      <h3 class="font-display text-3xl font-bold text-slate-900 mb-3">
+        <span data-lang="zh">全部完成！</span>
+        <span data-lang="en">All Done!</span>
+      </h3>
+      <p class="text-slate-600 max-w-lg mx-auto mb-2 leading-relaxed" data-lang="zh">你成功為 5 位學生找到了心流區。這正是 Csikszentmihalyi（1990）的核心主張：<strong>心流不是固定的，而是需要動態調適的</strong>——每位學習者的「心流走廊」都在不同的位置。</p>
+      <p class="text-slate-600 max-w-lg mx-auto mb-2 leading-relaxed" data-lang="en">You found the flow zone for all 5 students. This is Csikszentmihalyi's (1990) core claim: <strong>flow is not fixed — it must be dynamically calibrated</strong> — every learner's "flow corridor" sits at a different point.</p>
+      <button onclick="resetSim()" class="mt-6 px-8 py-3 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold shadow-lg shadow-emerald-500/30 transition-all">
+        <span data-lang="zh">↻ 再玩一次</span>
+        <span data-lang="en">↻ Play Again</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ⑥ CONCLUSION -->
+<section class="mb-8">
+  <div class="glass rounded-3xl p-6 sm:p-10 shadow-xl animate-slide-up">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600 text-xl">💡</div>
+      <div>
+        <div class="text-xs font-semibold text-amber-600 tracking-widest uppercase">Conclusion</div>
+        <h2 class="font-display text-2xl font-semibold text-slate-900">
+          <span data-lang="zh">結語</span>
+          <span data-lang="en">Conclusion</span>
+        </h2>
+      </div>
+    </div>
+    <div class="prose-flow">
+      <p data-lang="zh">心流理論提供了一個強而有力的視角來理解學習投入感的本質。<strong>挑戰與技能的動態平衡</strong>，不只是抽象的心理學概念——它可以直接轉化為教師的教學設計原則，也可以成為 AI 自適應系統的核心邏輯。如何在不同程度、不同背景的學習者之間，找到那條屬於每個人的「心流走廊」，是現代學習設計最值得持續探究的課題。</p>
+      <p data-lang="en">Flow theory provides a powerful lens for understanding the nature of learning engagement. The <strong>dynamic balance of challenge and skill</strong> is not an abstract psychological concept — it translates directly into instructional design principles and into the core logic of AI adaptive systems. Finding each learner's unique "flow corridor" across varying abilities and backgrounds remains one of the most worthwhile challenges in modern learning design.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ⑦ REFERENCES -->
+<section class="mb-10">
+  <div class="glass rounded-3xl p-6 sm:p-10 shadow-xl animate-slide-up">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-600 text-xl">📚</div>
+      <div>
+        <div class="text-xs font-semibold text-slate-600 tracking-widest uppercase">References</div>
+        <h2 class="font-display text-2xl font-semibold text-slate-900">
+          <span data-lang="zh">參考文獻</span>
+          <span data-lang="en">References</span>
+        </h2>
+      </div>
+    </div>
+    <ol class="space-y-4 text-sm text-slate-600 leading-relaxed">
+      <li class="pl-6 -indent-6 pb-4 border-b border-slate-200/50">
+        <span class="text-slate-900 font-medium">Csikszentmihalyi, M.</span> (1975). <em>Beyond boredom and anxiety: Experiencing flow in work and play.</em> Jossey-Bass.
+      </li>
+      <li class="pl-6 -indent-6 pb-4 border-b border-slate-200/50">
+        <span class="text-slate-900 font-medium">Csikszentmihalyi, M.</span> (1990). <em>Flow: The psychology of optimal experience.</em> Harper &amp; Row.
+      </li>
+      <li class="pl-6 -indent-6 pb-4 border-b border-slate-200/50">
+        <span class="text-slate-900 font-medium">Engeser, S., &amp; Rheinberg, F.</span> (2008). Flow, performance and moderators of challenge-skill balance. <em>Motivation and Emotion, 32</em>(3), 158–172. https://doi.org/10.1007/s11031-008-9102-4
+      </li>
+      <li class="pl-6 -indent-6 pb-4 border-b border-slate-200/50">
+        <span class="text-slate-900 font-medium">Malone, T. W.</span> (1981). Toward a theory of intrinsically motivating instruction. <em>Cognitive Science, 5</em>(4), 333–369. https://doi.org/10.1207/s15516709cog0504_2
+      </li>
+      <li class="pl-6 -indent-6 pb-4 border-b border-slate-200/50">
+        <span class="text-slate-900 font-medium">Massimini, F., &amp; Carli, M.</span> (1988). The systematic assessment of flow in daily experience. In M. Csikszentmihalyi &amp; I. S. Csikszentmihalyi (Eds.), <em>Optimal experience: Psychological studies of flow in consciousness</em> (pp. 266–287). Cambridge University Press.
+      </li>
+      <li class="pl-6 -indent-6 pb-4 border-b border-slate-200/50">
+        <span class="text-slate-900 font-medium">Nakamura, J., &amp; Csikszentmihalyi, M.</span> (2002). The concept of flow. In C. R. Snyder &amp; S. J. Lopez (Eds.), <em>Handbook of positive psychology</em> (pp. 89–105). Oxford University Press.
+      </li>
+      <li class="pl-6 -indent-6">
+        <span class="text-slate-900 font-medium">Vygotsky, L. S.</span> (1978). <em>Mind in society: The development of higher psychological processes.</em> Harvard University Press.
+      </li>
+    </ol>
+  </div>
+</section>
+
+<footer class="text-center text-xs text-slate-400 py-8">
+  <p>廖常智 · 林鈺棠 · 學習心理學期末報告</p>
+</footer>
 
 </main>
 
 <script>
-// ============== 預先撰寫的題庫 ==============
-// 每個主題包含 easy / flow / hard 三個難度,中英雙語各一份
-const CORPUS = {
-  "photosynthesis": {
-    icon: "🌱",
-    topic_zh: "光合作用",
-    topic_en: "Photosynthesis",
-    easy: {
-      zh: "植物會吃飯嗎?會喔!但牠們不是吃米飯。牠們用葉子吃陽光,牠們用根喝水,然後就會長大了。葉子是綠色的,因為綠色才可以接住陽光。所以你要記得幫植物澆水,還要讓它曬太陽,這樣它才會開心地長大喔!",
-      en: "Do plants eat food? Yes they do! But they don't eat rice. They use their leaves to eat sunshine. They use their roots to drink water. Then they grow big. Leaves are green because green can catch sunshine. So remember to water your plants and let them see the sun. They will be very happy!"
-    },
-    flow: {
-      zh: "光合作用是植物把陽光「翻譯」成能量的過程。葉子裡的葉綠素抓住陽光,把水分子拆開,並從空氣中抓取二氧化碳,組裝成葡萄糖。有趣的是,我們呼吸的氧氣其實是這個過程的「副產品」——對植物來說是廢物,對我們來說卻是生命必需。地球上幾乎所有食物鏈,源頭都在這個反應。",
-      en: "Photosynthesis is how plants translate sunlight into energy. Chlorophyll in their leaves captures light, splits water molecules, and pulls carbon dioxide from the air, assembling these into glucose. Interestingly, the oxygen we breathe is a by-product of this process — waste for the plant, but essential for us. Nearly every food chain on Earth begins with this single reaction."
-    },
-    hard: {
-      zh: "光合作用涵蓋光反應與卡爾文循環兩耦合階段。光反應於類囊體膜進行,光系統 II 與光系統 I 經 Z 型電子傳遞鏈將水氧化為氧氣,透過化學滲透勢生成 ATP 與 NADPH。後者驅動卡爾文循環中由 RuBisCO 催化的 CO₂ 固定反應,經三碳化合物 3-PGA 還原為 G3P,進而合成己醣。整體量子產率受光強度、CO₂ 分壓與溫度依存性 Rubisco 動力學共同調節。",
-      en: "Photosynthesis comprises two coupled phases: light-dependent reactions and the Calvin cycle. In the thylakoid membrane, Photosystems II and I drive a Z-scheme electron transport chain that oxidizes water and produces ATP and NADPH via chemiosmosis. These products power RuBisCO-catalyzed CO₂ fixation in the Calvin cycle, reducing 3-PGA intermediates to G3P for hexose synthesis. Quantum yield is modulated by irradiance, CO₂ partial pressure, and temperature-dependent Rubisco kinetics."
-    }
-  },
-
-  "quantum_entanglement": {
-    icon: "⚛️",
-    topic_zh: "量子糾纏",
-    topic_en: "Quantum entanglement",
-    easy: {
-      zh: "想像你有兩顆很特別的小球,你把它們分開,一顆放在台北,一顆放在紐約。當你打開台北那顆,發現它是紅色,紐約那顆「馬上」就會變藍色!不管距離多遠都會這樣。是不是很神奇?科學家叫這個「量子糾纏」。連愛因斯坦都覺得很不可思議,他叫這個現象「鬼魅般的事」!",
-      en: "Imagine you have two very special balls. You separate them — one in Taipei, one in New York. When you open the Taipei ball and see it's red, the New York ball will instantly become blue! No matter how far apart they are. Amazing, right? Scientists call this quantum entanglement. Even Einstein thought it was strange. He called it spooky!"
-    },
-    flow: {
-      zh: "量子糾纏是這樣的:兩個粒子可以「鎖」在一起,以至於測量其中一個,會立即決定另一個的狀態——即使它們相距百萬光年。Einstein 稱之為「鬼魅般的超距作用」,因為這似乎違反了訊號不能超光速的限制。但實驗(如 Aspect 1982)已經證實它真的存在。這個現象正是當代量子電腦與量子加密的基礎。",
-      en: "Quantum entanglement works like this: two particles can be \"locked\" together so that measuring one instantly determines the state of the other — even if they are light-years apart. Einstein called this \"spooky action at a distance,\" because it seems to violate the speed-of-light limit on signals. Yet experiments (e.g. Aspect, 1982) confirm it is real. This phenomenon is the foundation of modern quantum computing and quantum cryptography."
-    },
-    hard: {
-      zh: "量子糾纏指多粒子系統中的不可分離態:其聯合波函數無法寫為單粒子態的張量積。對 Bell 態 |Φ⁺⟩=(|00⟩+|11⟩)/√2 而言,任一子系統的約化密度矩陣呈最大混合態,顯示局域實在論與隱變數理論於 CHSH 不等式下被違反。後續 loophole-free Bell 測試確認了違反 Tsirelson 界以下的非局域關聯,構成量子密鑰分發(BB84、E91 協議)與拓樸量子計算之物理基底。",
-      en: "Quantum entanglement refers to the non-separability of multi-particle systems: their joint wavefunction cannot be factored as a tensor product of single-particle states. For the Bell state |Φ⁺⟩=(|00⟩+|11⟩)/√2, the reduced density matrix of either subsystem is maximally mixed, demonstrating that local realism with hidden variables is violated under the CHSH inequality. Subsequent loophole-free Bell tests confirmed nonlocal correlations bounded by Tsirelson's limit, providing the physical substrate for quantum key distribution (BB84, E91) and topological quantum computation."
-    }
-  },
-
-  "french_revolution": {
-    icon: "🗽",
-    topic_zh: "法國大革命",
-    topic_en: "The French Revolution",
-    easy: {
-      zh: "很久很久以前,法國的國王和王后住在豪華的城堡,過著很爽的日子。可是路上的人沒有飯吃,大家肚子好餓喔!後來大家氣到爆,就跑出來抗議,把國王和王后抓走了。從此以後,大家就決定不要再有國王了,要自己決定自己的事情。這就是法國大革命!",
-      en: "A long time ago, the king and queen of France lived in a fancy castle and had a great life. But people on the streets had no food. They were so hungry! Finally, everyone got very angry and went out to protest. They caught the king and queen. After that, the people decided: no more kings! We decide for ourselves. That is the French Revolution!"
-    },
-    flow: {
-      zh: "1789 年的法國大革命,並非單一原因引起,而是多重壓力的爆發。財政破產、糧價飛漲、第三階級(平民)對特權體制的不滿匯聚成滔天怒火,巴士底監獄的攻陷成為起點。「自由、平等、博愛」的口號傳遍歐洲。但革命的軌跡並不浪漫——隨之而來的恐怖統治,讓人們開始思考一個至今未解的問題:追求自由的革命,如何避免成為新的暴政?",
-      en: "The French Revolution of 1789 did not have a single cause; it was the explosion of accumulated pressures. Fiscal collapse, soaring grain prices, and the Third Estate's resentment against aristocratic privilege fused into mass anger. The storming of the Bastille marked its start. \"Liberty, Equality, Fraternity\" echoed across Europe. Yet the path was hardly romantic — the Reign of Terror that followed posed a question still unsolved today: how does a revolution for freedom avoid becoming a new tyranny?"
-    },
-    hard: {
-      zh: "1789 年的革命斷裂可置於長時段結構性解讀中:Ancien Régime 的封建賦稅體制與第三等級的資產階級興起形成階級對抗的物質基礎;康德啟蒙理性與盧梭普遍意志論為意識形態裝置。從三級會議召開、網球場宣誓、攻陷巴士底,到《人權宣言》的法理建構,革命迅速激進化。雅各賓專政下的恐怖統治、熱月反動、督政府的政治真空,最終由波拿巴主義收編。Tocqueville 與 Furet 後續關於革命「連續性 vs 斷裂性」的史學爭辯,至今未休。",
-      en: "The 1789 rupture demands a longue durée structural reading: feudal tax structures of the Ancien Régime and the rising bourgeoisie within the Third Estate formed the material basis of class antagonism, while Kantian Enlightenment reason and Rousseau's general will provided ideological apparatus. From the Estates-General to the Tennis Court Oath, the storming of the Bastille, and the juridical construction of the Declaration of the Rights of Man, the revolution radicalized rapidly. The Jacobin Terror, the Thermidorian Reaction, and the Directory's political vacuum were eventually absorbed by Bonapartism. Tocqueville's and Furet's continuing historiographical debate over continuity vs. rupture remains unresolved."
-    }
-  },
-
-  "bayes_theorem": {
-    icon: "🎲",
-    topic_zh: "貝氏定理",
-    topic_en: "Bayes' theorem",
-    easy: {
-      zh: "假設你在找你的貓。一開始你猜可能在沙發下、廚房、或床上,各有可能。後來你聽到廚房有聲音!現在你會覺得貓在廚房的機會比剛剛大很多。每次有新的線索,你就更新猜測——這就是貝氏定理!它教我們用新資訊去更新舊的想法,讓我們越猜越準。是不是很聰明?",
-      en: "Imagine you are looking for your cat. At first you think maybe sofa, kitchen, or bed — all possible. Then you hear a sound in the kitchen! Now you think the cat is much more likely in the kitchen. Every time there is new information, you update your guess. That is Bayes' theorem! It teaches us to use new clues to refine old beliefs. Clever, right?"
-    },
-    flow: {
-      zh: "貝氏定理告訴我們:每個新證據出現時,該如何理性地更新原本的信念。公式很簡單:P(A|B) = P(B|A) × P(A) / P(B)。但它顛覆了我們的直覺。舉例:某疾病盛行率 1%,檢測準確度 99%,你測出陽性——你真的得病的機率多高?答案不是 99%,而是約 50%。這個落差,正是醫學、法庭、機器學習都必須面對的「基率謬誤」。",
-      en: "Bayes' theorem tells us how to rationally update prior beliefs in light of new evidence. The formula is simple: P(A|B) = P(B|A) × P(A) / P(B). But it overturns intuition. Example: a disease has 1% prevalence; a test is 99% accurate; you test positive — what's the chance you actually have it? The answer is not 99%, but around 50%. This gap is the famous \"base-rate fallacy\" that medicine, courts, and machine learning all must confront."
-    },
-    hard: {
-      zh: "貝氏推論將不確定性形式化為條件概率的更新:後驗 ∝ 似然 × 先驗,即 P(θ|D) = P(D|θ)P(θ)/P(D)。先驗 P(θ) 編碼信念,似然 P(D|θ) 捕捉資料生成機制,證據 P(D) = ∫P(D|θ)P(θ)dθ 作為規範化常數,於高維參數空間常須仰賴 MCMC 或變分推論逼近。共軛先驗確保解析解;Jeffreys 先驗滿足重參數不變性。階層貝氏模型容許部分匯聚,而經驗貝氏則以資料估計先驗,於現代統計與機率程式設計中構成方法論核心。",
-      en: "Bayesian inference formalizes uncertainty as the updating of conditional probabilities: posterior ∝ likelihood × prior, i.e. P(θ|D) = P(D|θ)P(θ)/P(D). The prior P(θ) encodes belief, the likelihood P(D|θ) captures data-generating mechanism, and the evidence P(D) = ∫P(D|θ)P(θ)dθ acts as normalizing constant, typically requiring MCMC or variational approximation in high-dimensional parameter spaces. Conjugate priors yield analytic solutions; Jeffreys priors satisfy reparameterization invariance. Hierarchical Bayesian models permit partial pooling, while empirical Bayes estimates priors from data — together forming the methodological core of modern statistics and probabilistic programming."
-    }
-  },
-
-  "crispr": {
-    icon: "🧬",
-    topic_zh: "CRISPR 基因編輯",
-    topic_en: "CRISPR gene editing",
-    easy: {
-      zh: "你有沒有用過 Word 的「尋找與取代」功能?CRISPR 就像生物世界的這個功能!科學家可以用它找到細胞裡某一段壞掉的 DNA,然後把它修好,或換成新的。這樣可能治好以前治不好的病。聽起來很厲害對不對?不過這個工具也有點危險,所以大家還在小心地研究怎麼使用它。",
-      en: "Have you ever used \"Find and Replace\" in Word? CRISPR is like that, but for living cells! Scientists can use it to find a broken piece of DNA in a cell, then fix it or replace it. This may cure diseases we couldn't cure before. Sounds amazing, right? But this tool is also a bit dangerous, so people are still carefully studying how to use it well."
-    },
-    flow: {
-      zh: "CRISPR 原本是細菌對抗病毒的「免疫系統」——它能記住入侵者的 DNA,下次再見就剪掉。2012 年,Doudna 與 Charpentier 把它改造成可編程的基因剪刀:給它一段 RNA 序列當「地址」,它就能精準切開人類細胞的特定基因。這項技術讓「治療遺傳病」從科幻變現實,但也引發了倫理風暴——當我們能編輯胚胎,該不該做?2020 年諾貝爾化學獎正是頒給這項發現。",
-      en: "CRISPR was originally a bacterial \"immune system\" against viruses — it memorizes invader DNA and cuts it on next encounter. In 2012, Doudna and Charpentier repurposed it as a programmable gene-editing tool: feed it an RNA \"address,\" and it precisely cuts a target gene in human cells. This moved \"curing genetic disease\" from science fiction to reality, but ignited an ethical storm — once we can edit embryos, should we? The 2020 Nobel Prize in Chemistry honored this very discovery."
-    },
-    hard: {
-      zh: "CRISPR-Cas9 系統源自原核生物適應性免疫,其 Type II 構型由 tracrRNA-crRNA 雙鏈引導 Cas9 內切酶辨識 PAM 序列鄰近的原間隔區,經 HNH 與 RuvC 結構域催化雙股 DNA 切割,後續可經 NHEJ 致基因敲除或 HDR 達精準插入。Base editing(Komor 2016)與 prime editing(Anzalone 2019)規避 DSB 風險,以脫胺酶或反向轉錄酶實現核苷酸層級重寫。脫靶效應、體內遞送(LNP 與 AAV 載體)及生殖細胞編輯之國際倫理治理框架,構成當代 CRISPR 轉譯研究的三大瓶頸。",
-      en: "The CRISPR-Cas9 system, derived from prokaryotic adaptive immunity, in its Type II configuration employs a tracrRNA-crRNA duplex to guide the Cas9 endonuclease to recognize protospacer sequences adjacent to a PAM motif, with the HNH and RuvC domains catalyzing double-stranded DNA cleavage that is subsequently resolved by NHEJ for gene knockout or HDR for precise knock-in. Base editing (Komor, 2016) and prime editing (Anzalone, 2019) circumvent DSB risks via deaminases or reverse transcriptases, enabling nucleotide-level rewriting. Off-target effects, in vivo delivery via LNPs and AAV vectors, and the international ethical governance of germline editing constitute the three principal bottlenecks of contemporary translational CRISPR research."
-    }
-  },
-
-  "existentialism": {
-    icon: "🕳️",
-    topic_zh: "存在主義",
-    topic_en: "Existentialism",
-    easy: {
-      zh: "存在主義是說:你的人生沒有人會幫你決定要做什麼。你今天要當醫生、藝術家、廚師,還是什麼都不做?都是你自己選的。沒有神、沒有命運、沒有人會替你決定。聽起來很自由?但也很可怕,因為你不能再說「都是別人害我的」。你自己的人生,自己負責。這就是存在主義想說的事。",
-      en: "Existentialism says: nobody will decide your life for you. Today, do you want to be a doctor, an artist, a chef, or do nothing? You choose. No god, no fate, no one else decides. Sounds free? Yes — but also scary. You can't say \"others made me do it\" anymore. Your life is yours, and you bear it. That's what existentialism wants to say."
-    },
-    flow: {
-      zh: "存在主義的核心命題是 Sartre 那句:「存在先於本質」。意思是:你不是被造來達成某個目的的——你先存在,然後透過選擇創造你是誰。這個觀念解放了人,卻也帶來「焦慮」:既然沒有預設答案,每個選擇都得你自己承擔。Camus 則用薛西弗斯的神話回應:即使人生荒謬,人仍能在反抗中找到意義。存在主義不只是哲學,它在 20 世紀的文學、心理治療、神學中都留下深刻印記。",
-      en: "The core claim of existentialism is Sartre's line: \"existence precedes essence.\" You are not created to fulfill a preset purpose — you exist first, then create who you are through choices. This liberates, but also brings \"anxiety\": with no preset answer, every choice is yours to bear. Camus responded with the myth of Sisyphus — even in absurdity, humans find meaning through revolt. Existentialism is not only philosophy; it left deep marks on 20th-century literature, psychotherapy, and theology."
-    },
-    hard: {
-      zh: "存在主義並非統一學派,而是橫跨 Kierkegaard 的宗教辯證、Heidegger 的此在(Dasein)現象學分析、Sartre 的對自存有與徹底自由論、Merleau-Ponty 的具身化主體、到 de Beauvoir 對處境的倫理重構之異質匯流。其共通問題意識在於:於 nihilism 危機下重構主體性與意義可能。Heidegger 透過向死存在揭示本真性,Sartre 以「自欺」(mauvaise foi)診斷逃避自由的心理結構,Levinas 則以他者面容反轉自我中心存有論。當代承襲者如 Žižek 將其與精神分析、Lacanian 主體理論交織,延伸至意識形態批判場域。",
-      en: "Existentialism is not a unified school but a heterogeneous convergence spanning Kierkegaard's religious dialectic, Heidegger's phenomenological analysis of Dasein, Sartre's being-for-itself and radical freedom, Merleau-Ponty's embodied subjectivity, and de Beauvoir's ethical reconstruction of situated existence. Their shared problematic: reconstructing subjectivity and the possibility of meaning under the crisis of nihilism. Heidegger discloses authenticity via being-toward-death; Sartre diagnoses the psychological structure of fleeing freedom as \"bad faith\" (mauvaise foi); Levinas inverts ego-centered ontology through the face of the Other. Contemporary inheritors such as Žižek interweave this lineage with psychoanalysis and Lacanian subject theory, extending it into the field of ideology critique."
-    }
-  },
-
-  "cognitive_load": {
-    icon: "🧠",
-    topic_zh: "認知負荷理論",
-    topic_en: "Cognitive load theory",
-    easy: {
-      zh: "你的腦袋就像一個小杯子,一次只能裝一點點東西。如果老師一次塞給你太多資訊,杯子就會滿出來,你就會聽不懂、忘記。所以好老師會把東西切成小塊,慢慢給你。這樣杯子才不會滿出來,你就學得會了。這就是認知負荷理論,簡單說就是「不要一次塞太多」!",
-      en: "Your brain is like a small cup. It can only hold a little at one time. If a teacher gives you too much information at once, the cup will overflow. You will not understand and you will forget. So a good teacher cuts things into small pieces and gives them to you slowly. The cup stays manageable, and you learn. That is cognitive load theory: \"don't pour too much at once\"!"
-    },
-    flow: {
-      zh: "Sweller (1988) 提出的認知負荷理論指出:我們的工作記憶容量極為有限,大約只能同時處理 4-7 個訊息單位。學習時的負荷有三種:內在負荷(材料本身的難度)、外在負荷(呈現方式造成的干擾)、增生負荷(用於建構基模的有效努力)。教學設計的關鍵,不是「降低所有負荷」,而是降低外在負荷、提升增生負荷,讓有限的腦力用在真正能促進學習的地方。",
-      en: "Sweller's (1988) cognitive load theory argues that working memory is severely limited — capable of holding only 4–7 chunks at once. Three types of load arise during learning: intrinsic (inherent material difficulty), extraneous (interference from how it's presented), and germane (productive effort for schema construction). The key to instructional design is not \"reduce all load,\" but to reduce extraneous load and increase germane load, channeling limited cognitive bandwidth into what truly fosters learning."
-    },
-    hard: {
-      zh: "Sweller、van Merriënboer 與 Paas 的 CLT 將學習效能化約為工作記憶資源配置問題:內在認知負荷取決於元素互動性(element interactivity)與學習者基模可用性,外在負荷源於不當訊息呈現如資訊分散、訊息冗餘、模態整合不當,增生負荷則指涉基模建構與自動化所需處理。CLT 衍生諸多教學效應:worked-example effect、modality effect、redundancy effect、expertise reversal effect、imagination effect 等。後者揭示專家與新手反向的負荷剖面,構成適性教學系統設計之核心挑戰,並與 dual-coding 理論及主動推論認知架構產生交織。",
-      en: "Sweller, van Merriënboer, and Paas's CLT reduces learning efficacy to a working-memory resource-allocation problem: intrinsic cognitive load is determined by element interactivity and learner schema availability; extraneous load arises from suboptimal presentation such as split-attention, redundancy, and improper modality integration; germane load denotes processing devoted to schema construction and automation. CLT generates numerous instructional effects: the worked-example, modality, redundancy, expertise-reversal, and imagination effects. The expertise-reversal effect reveals the opposite load profiles of experts and novices, constituting a core challenge for adaptive instructional system design and intersecting with dual-coding theory and active-inference cognitive architectures."
-    }
-  },
-
-  "blockchain": {
-    icon: "⛓️",
-    topic_zh: "區塊鏈",
-    topic_en: "Blockchain",
-    easy: {
-      zh: "想像班上有一本「紀錄本」,每次有人借了東西,大家都會在自己的本子上寫下來,而且每個人的本子都一樣。這樣就沒有人可以偷偷改紀錄。因為如果你改了你的,其他人的本子還是寫著舊的!區塊鏈就像這樣,是一個大家一起記帳的系統,沒有人可以作弊。聽起來很公平對吧?",
-      en: "Imagine your class has a notebook. Whenever someone borrows something, everyone writes it in their own notebook, and all notebooks match. Now no one can secretly change the record. If you change yours, all the others still show the old one! Blockchain works like this — a shared bookkeeping system where no one can cheat. Sounds fair, right?"
-    },
-    flow: {
-      zh: "區塊鏈最簡單的描述是「分散式帳本」:不靠單一銀行或政府,而是讓全球數千台電腦同時保存一份相同的交易紀錄。每筆新交易被打包成「區塊」,並用密碼學鍊接到前一個區塊——一旦寫入,幾乎無法修改。比特幣是第一個成功應用,但更深刻的問題是:當「信任」可以由演算法取代,我們社會的中介者(銀行、律師、政府)還剩下什麼角色?",
-      en: "Blockchain is most simply described as a \"distributed ledger\": rather than relying on a single bank or government, thousands of computers worldwide hold the same transaction record. Each new transaction is bundled into a \"block\" and cryptographically chained to the previous one — once written, it is nearly impossible to alter. Bitcoin was the first successful application, but the deeper question is: when trust can be replaced by algorithm, what role remains for societal intermediaries — banks, lawyers, governments?"
-    },
-    hard: {
-      zh: "區塊鏈為分散式狀態機之共識實現,透過密碼學雜湊鏈結與 Merkle tree 構建不可篡改帳本。比特幣採 Nakamoto 共識的工作量證明(PoW),以算力競爭抵抗女巫攻擊,代價為龐大能耗;以太坊 2.0 轉向權益證明(PoS),引入質押經濟與罰沒機制。Layer 2 解決方案如 zk-Rollup 與 Optimistic Rollup 透過鏈下計算與有效性證明緩解可擴展性三難。MEV 與抗審查性、零知識證明於隱私保護之應用、跨鏈互操作協議,以及監管套利下的去中心化金融(DeFi)系統性風險,構成當代分散式系統研究之多重前沿。",
-      en: "Blockchain instantiates consensus across distributed state machines, constructing tamper-evident ledgers via cryptographic hash chains and Merkle trees. Bitcoin employs Nakamoto consensus through Proof-of-Work (PoW), resisting Sybil attacks via computational competition at the cost of enormous energy expenditure; Ethereum 2.0 transitioned to Proof-of-Stake (PoS) with staking economics and slashing mechanisms. Layer-2 solutions such as zk-Rollups and Optimistic Rollups alleviate the scalability trilemma via off-chain computation and validity proofs. MEV and censorship resistance, zero-knowledge proofs for privacy, cross-chain interoperability protocols, and systemic risk in DeFi under regulatory arbitrage constitute the multi-front edge of contemporary distributed systems research."
-    }
-  }
-};
-
-// ============== I18N ==============
-const I18N = {
-  zh: {
-    loadingStages: [
-      '正在思考主題的核心概念...',
-      '正在撰寫無聊版本（過於簡單）...',
-      '正在撰寫心流版本（剛好挑戰你）...',
-      '正在撰寫焦慮版本（刻意拉高難度）...',
-      '完成,準備呈現給你'
-    ],
-    labels: {
-      easy: '版本 A · 太簡單', flow: '版本 B · 剛剛好', hard: '版本 C · 太難',
-      readPrompt: '閱讀完後,請評分你的主觀感受:',
-      samLow: '完全無聊', samMid: '剛剛好', samHigh: '非常焦慮',
-      version: '版本'
-    },
-    rateAll: '請先完成三個版本的評分'
-  },
-  en: {
-    loadingStages: [
-      'Thinking about the core concept...',
-      'Writing the boring version (too easy)...',
-      'Writing the flow version (just challenging)...',
-      'Writing the anxious version (deliberately hard)...',
-      'Done. Preparing your experience'
-    ],
-    labels: {
-      easy: 'Version A · Too Easy', flow: 'Version B · Just Right', hard: 'Version C · Too Hard',
-      readPrompt: 'After reading, rate your subjective experience:',
-      samLow: 'totally bored', samMid: 'just right', samHigh: 'very anxious',
-      version: 'Version'
-    },
-    rateAll: 'Please rate all three versions first'
-  }
-};
-
+// ── Language ──────────────────────────────────────────────
 let LANG = 'zh';
-const STATE = {
-  topic: null,
-  versions: null,
-  ratings: { easy: null, flow: null, hard: null },
-  shuffled: null
-};
-
 function setLang(l) {
   LANG = l;
-  document.body.classList.remove('lang-zh', 'lang-en');
-  document.body.classList.add('lang-' + l);
-  document.getElementById('btn-zh').classList.toggle('active', l === 'zh');
-  document.getElementById('btn-en').classList.toggle('active', l === 'en');
-  document.documentElement.lang = (l === 'zh') ? 'zh-Hant' : 'en';
-  positionLangIndicator();
-  renderTopicGrid();
-  if (STATE.versions) {
-    const expPanel = document.getElementById('step-experience');
-    if (!expPanel.classList.contains('hidden')) renderTextCards();
-    const resPanel = document.getElementById('step-result');
-    if (!resPanel.classList.contains('hidden')) { renderResultBars(); renderInterpretation(); }
-  }
+  document.body.classList.remove('lang-zh','lang-en');
+  document.body.classList.add('lang-'+l);
+  document.getElementById('btn-zh').classList.toggle('active', l==='zh');
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.documentElement.lang = l==='zh' ? 'zh-Hant' : 'en';
+  positionIndicator();
+  renderCase();
 }
-
-function positionLangIndicator() {
-  const switchEl = document.getElementById('langSwitch');
-  const activeBtn = switchEl.querySelector('button.active');
+function positionIndicator() {
+  const sw = document.getElementById('langSwitch');
+  const active = sw.querySelector('button.active');
   const ind = document.getElementById('langIndicator');
-  if (activeBtn) {
-    ind.style.left = activeBtn.offsetLeft + 'px';
-    ind.style.width = activeBtn.offsetWidth + 'px';
-  }
+  if (active) { ind.style.left = active.offsetLeft+'px'; ind.style.width = active.offsetWidth+'px'; }
 }
 
-function renderTopicGrid() {
-  const grid = document.getElementById('topicGrid');
-  grid.innerHTML = '';
-  Object.entries(CORPUS).forEach(([key, item]) => {
-    const card = document.createElement('div');
-    card.className = 'topic-card p-5 rounded-2xl bg-white border-2 border-slate-200/70 shadow-sm';
-    card.onclick = () => selectTopic(key);
-    card.innerHTML = `
-      <div class="text-4xl mb-3 topic-icon">${item.icon}</div>
-      <div class="font-semibold text-slate-900 mb-1">
-        ${LANG === 'zh' ? item.topic_zh : item.topic_en}
-      </div>
-      <div class="text-xs text-slate-500">
-        ${LANG === 'zh' ? '點擊體驗' : 'Tap to start'}
-      </div>
-    `;
-    grid.appendChild(card);
-  });
+// ── Simulator Data ────────────────────────────────────────
+const CASES = [
+  {
+    avatar: '👦', skill: 2,
+    name_zh: '小安', name_en: 'Xiao An',
+    subject_zh: '程式設計課', subject_en: 'Programming Class',
+    sit_zh: '完全沒有程式基礎，老師第一堂課就直接教遞迴函數。小安盯著程式碼，完全看不懂任何一行…',
+    sit_en: 'No programming background at all. The teacher\'s first lesson: recursive functions. Xiao An stares at the code — can\'t understand a single line.',
+    startChallenge: 9,
+    hint_zh: '遞迴對初學者太難！先從變數、基本迴圈教起，讓小安能真正跟上。',
+    hint_en: 'Recursion is too advanced for a beginner! Start with variables and basic loops so Xiao An can follow.',
+  },
+  {
+    avatar: '🧑', skill: 8,
+    name_zh: '明哲', name_en: 'Ming Zhe',
+    subject_zh: '數學課', subject_en: 'Math Class',
+    sit_zh: '已經精通四則運算，老師還在帶全班練習個位數加法。明哲上課眼神渙散，開始在課本角落畫小人…',
+    sit_en: 'Already mastered arithmetic. Teacher is drilling single-digit addition with the whole class. Ming Zhe zones out and starts doodling in the margins.',
+    startChallenge: 2,
+    hint_zh: '個位數加法對明哲完全沒有挑戰！給他分數運算或代數題，讓思考重新活起來。',
+    hint_en: 'Single-digit addition offers zero challenge! Give him fractions or algebra to re-engage his mind.',
+  },
+  {
+    avatar: '👧', skill: 3,
+    name_zh: '雅婷', name_en: 'Ya Ting',
+    subject_zh: '英語閱讀', subject_en: 'English Reading',
+    sit_zh: '學英文才三個月。老師為了「沉浸式教學」，叫她直接讀哈利波特英文原版。每一句話都要查字典…',
+    sit_en: 'Three months of English study. Teacher assigns Harry Potter in full English for "immersion." Every sentence needs the dictionary.',
+    startChallenge: 9,
+    hint_zh: '哈利波特對三個月的學習者太難！從短篇繪本或簡單日常對話練習開始。',
+    hint_en: 'Harry Potter is too advanced for a 3-month learner! Try short picture books or simple daily dialogues first.',
+  },
+  {
+    avatar: '🧒', skill: 7,
+    name_zh: '大志', name_en: 'Da Zhi',
+    subject_zh: '籃球訓練', subject_en: 'Basketball Training',
+    sit_zh: '打籃球五年的校隊球員。教練為了「打好基礎」讓他和新生一起練原地運球。大志在場邊嘆氣，完全提不起勁…',
+    sit_en: 'Five-year varsity basketball player. Coach pairs him with beginners for stationary dribbling drills. Da Zhi sighs — zero motivation.',
+    startChallenge: 2,
+    hint_zh: '原地運球對五年老手太簡單！讓他練高速移動中的變向或一對一防守對抗。',
+    hint_en: 'Stationary dribbling is too easy for a veteran! Try high-speed crossovers or 1-on-1 defense drills.',
+  },
+  {
+    avatar: '👩', skill: 5,
+    name_zh: '小琪', name_en: 'Xiao Qi',
+    subject_zh: '吉他練習', subject_en: 'Guitar Practice',
+    sit_zh: '學吉他六個月，剛學會幾個基本和弦換把。老師覺得「要嚴格才能進步」，直接指定她彈古典協奏曲…',
+    sit_en: 'Six months of guitar, knows basic chord changes. Teacher, believing in high standards, assigns a full classical concerto.',
+    startChallenge: 10,
+    hint_zh: '古典協奏曲對六個月的學生遠超能力！先給她簡單的流行歌曲練習，建立信心。',
+    hint_en: 'A classical concerto is far beyond a 6-month student! Try simple pop songs first to build confidence.',
+  },
+];
+
+// ── Simulator State ───────────────────────────────────────
+let sim = { idx: 0, challenge: CASES[0].startChallenge, completed: new Set(), solved: false };
+
+function getZone(skill, challenge) {
+  const fMin = Math.max(1, skill - 1);
+  const fMax = Math.min(10, skill + 2);
+  if (challenge < fMin) return 'boredom';
+  if (challenge > fMax) return 'anxiety';
+  return 'flow';
 }
 
-function showStep(n) {
-  document.querySelectorAll('.step-panel').forEach(p => p.classList.add('hidden'));
-  const map = { 1: 'step-input', 2: 'step-loading', 3: 'step-experience', 4: 'step-result' };
-  document.getElementById(map[n]).classList.remove('hidden');
-  ['dot-1', 'dot-2', 'dot-3'].forEach((id, i) => {
-    const el = document.getElementById(id);
-    el.classList.remove('active', 'done');
-    if (i + 1 < Math.min(n, 3)) el.classList.add('done');
-    else if (i + 1 === Math.min(n, 3)) el.classList.add('active');
-  });
-  if (n === 4) ['dot-1','dot-2','dot-3'].forEach(id => document.getElementById(id).classList.add('done'));
-}
-
-async function selectTopic(key) {
-  const item = CORPUS[key];
-  STATE.topic = item;
-  STATE.versions = { easy: item.easy, flow: item.flow, hard: item.hard };
-  STATE.ratings = { easy: null, flow: null, hard: null };
-
-  document.getElementById('loadingTopicZh').textContent = item.topic_zh;
-  document.getElementById('loadingTopicEn').textContent = item.topic_en;
-  showStep(2);
-
-  // 模擬 AI 生成的動畫(實際內容已經預載)
-  await simulateGeneration();
-
-  renderTextCards();
-  showStep(3);
-  window.scrollTo({ top: document.getElementById('lab-section').offsetTop - 80, behavior: 'smooth' });
-}
-
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-async function simulateGeneration() {
-  const bars = ['bar-easy', 'bar-flow', 'bar-hard'];
-  const statusEl = document.getElementById('loadingStatus');
-  const stages = I18N[LANG].loadingStages;
-
-  bars.forEach(id => document.getElementById(id).style.width = '0%');
-
-  for (let i = 0; i < stages.length; i++) {
-    statusEl.textContent = stages[i];
-    const target = (i + 1) / stages.length * 100;
-    bars.forEach(id => document.getElementById(id).style.width = target + '%');
-    await sleep(700);
-  }
-  await sleep(400);
-}
-
-function renderTextCards() {
-  const container = document.getElementById('textCards');
-  container.innerHTML = '';
-  const versions = [
-    { key: 'easy', badge: 'badge-easy', emoji: '😴' },
-    { key: 'flow', badge: 'badge-flow', emoji: '🌊' },
-    { key: 'hard', badge: 'badge-hard', emoji: '😰' }
-  ];
-  if (!STATE.shuffled) {
-    STATE.shuffled = [...versions].sort(() => Math.random() - 0.5);
-  }
-
-  STATE.shuffled.forEach((v, idx) => {
-    const text = STATE.versions[v.key][LANG];
-    const card = document.createElement('div');
-    card.className = 'text-card glass rounded-2xl p-5 sm:p-7 shadow-md hover:shadow-xl border border-slate-200/50';
-    card.dataset.versionKey = v.key;
-    const isSelected = STATE.ratings[v.key] !== null;
-    card.innerHTML = `
-      <div class="flex items-start gap-4 mb-4 pb-4 border-b border-slate-200">
-        <div class="${v.badge} w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-md flex-shrink-0">
-          ${v.emoji}
-        </div>
-        <div class="flex-1">
-          <div class="text-xs font-bold text-slate-500 tracking-widest uppercase mb-1">
-            ${I18N[LANG].labels.version} ${String.fromCharCode(65+idx)}
-          </div>
-          <div class="font-display text-lg font-semibold text-slate-900">
-            ${LANG === 'zh' ? STATE.topic.topic_zh : STATE.topic.topic_en}
-          </div>
-        </div>
-      </div>
-      <div class="text-base sm:text-lg leading-relaxed text-slate-700 mb-5" style="min-height: 80px;">
-        ${text}
-      </div>
-      <div class="pt-4 border-t border-slate-200/70">
-        <div class="text-xs font-semibold text-slate-500 mb-3 tracking-wide">
-          ${I18N[LANG].labels.readPrompt}
-        </div>
-        <div class="flex items-center justify-between gap-1 sm:gap-2 mb-2">
-          ${[1,2,3,4,5,6,7,8,9].map(n => `
-            <button onclick="setRating('${v.key}', ${n}, this)" class="sam-btn flex-1 max-w-[44px] aspect-square rounded-xl bg-white border-2 border-slate-200 hover:border-emerald-400 text-slate-600 hover:text-emerald-700 font-medium text-sm sm:text-base ${STATE.ratings[v.key] === n ? 'selected' : ''}">
-              ${n}
-            </button>
-          `).join('')}
-        </div>
-        <div class="flex justify-between text-[10px] sm:text-xs text-slate-400 px-1">
-          <span>😴 ${I18N[LANG].labels.samLow}</span>
-          <span>🌊 ${I18N[LANG].labels.samMid}</span>
-          <span>😰 ${I18N[LANG].labels.samHigh}</span>
-        </div>
-      </div>
-    `;
-    container.appendChild(card);
-  });
-  updateRateHint();
-}
-
-function setRating(key, value, btn) {
-  STATE.ratings[key] = value;
-  const card = btn.closest('.text-card');
-  card.querySelectorAll('.sam-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  updateRateHint();
-}
-
-function updateRateHint() {
-  const allRated = STATE.ratings.easy !== null && STATE.ratings.flow !== null && STATE.ratings.hard !== null;
-  const resBtn = document.getElementById('seeResultBtn');
-  resBtn.disabled = !allRated;
-  document.getElementById('rateHint').textContent = allRated
-    ? (LANG === 'zh' ? '✓ 已完成全部評分,可查看結果' : '✓ All rated. Click to view results.')
-    : (LANG === 'zh' ? '完成全部三個評分後即可查看結果' : 'Complete all three ratings to continue');
-}
-
-function showResults() {
-  if (STATE.ratings.easy === null || STATE.ratings.flow === null || STATE.ratings.hard === null) {
-    alert(I18N[LANG].rateAll);
+function renderCase() {
+  const card = document.getElementById('caseCard');
+  if (sim.idx >= CASES.length) {
+    card.innerHTML = '';
+    document.getElementById('completionScreen').classList.remove('hidden');
+    spawnConfetti();
     return;
   }
-  showStep(4);
-  renderResultBars();
-  renderInterpretation();
-  window.scrollTo({ top: document.getElementById('lab-section').offsetTop - 80, behavior: 'smooth' });
-}
+  document.getElementById('completionScreen').classList.add('hidden');
 
-function renderResultBars() {
-  const container = document.getElementById('resultBars');
-  const data = [
-    { key: 'easy', label_zh: '版本 A · 無聊版(設定難度: 2/9)', label_en: 'Version A · Easy (set: 2/9)', emoji: '😴', color: 'blue' },
-    { key: 'flow', label_zh: '版本 B · 心流版(設定難度: 5/9)', label_en: 'Version B · Flow (set: 5/9)', emoji: '🌊', color: 'emerald' },
-    { key: 'hard', label_zh: '版本 C · 焦慮版(設定難度: 8/9)', label_en: 'Version C · Hard (set: 8/9)', emoji: '😰', color: 'orange' }
-  ];
-  container.innerHTML = '';
-  data.forEach(d => {
-    const rating = STATE.ratings[d.key];
-    const colorClasses = {
-      blue: { bg: 'bg-blue-100', fill: 'bg-blue-500', text: 'text-blue-700' },
-      emerald: { bg: 'bg-emerald-100', fill: 'bg-emerald-500', text: 'text-emerald-700' },
-      orange: { bg: 'bg-orange-100', fill: 'bg-orange-500', text: 'text-orange-700' }
-    };
-    const c = colorClasses[d.color];
-    const row = document.createElement('div');
-    row.innerHTML = `
-      <div class="flex items-center justify-between mb-2">
-        <div class="flex items-center gap-2">
-          <span class="text-xl">${d.emoji}</span>
-          <span class="text-sm font-medium text-slate-700">
-            ${LANG === 'zh' ? d.label_zh : d.label_en}
-          </span>
+  const c = CASES[sim.idx];
+  const zone = getZone(c.skill, sim.challenge);
+  const isFlow = zone === 'flow';
+
+  const fMin = Math.max(1, c.skill - 1);
+  const fMax = Math.min(10, c.skill + 2);
+  const borePct  = ((fMin - 1) / 9) * 100;
+  const flowPct  = ((fMax - fMin) / 9) * 100;
+  const anxPct   = ((10 - fMax)  / 9) * 100;
+  const needlePct = ((sim.challenge - 1) / 9) * 100;
+
+  const faceMap = {
+    boredom: sim.solved ? '🥳' : '😴',
+    flow:    sim.solved ? '🥳' : '🌊',
+    anxiety: sim.solved ? '🥳' : '😰',
+  };
+  const face = faceMap[zone];
+
+  const zoneLabel = {
+    zh: { boredom:'😴 無聊區', flow:'🌊 進入心流區！', anxiety:'😰 焦慮區' },
+    en: { boredom:'😴 Boredom Zone', flow:'🌊 In the Flow Zone!', anxiety:'😰 Anxiety Zone' },
+  }[LANG][zone];
+
+  const zoneColor = {
+    boredom: 'text-blue-700 bg-blue-100',
+    flow:    'text-emerald-700 bg-emerald-100',
+    anxiety: 'text-red-700 bg-red-100',
+  }[zone];
+
+  const cardBg = isFlow ? 'bg-emerald-50 border-2 border-emerald-300' : 'bg-slate-50 border-2 border-slate-200';
+
+  const isLast = sim.idx === CASES.length - 1;
+  const nextLabel = LANG==='zh' ? (isLast ? '🏆 查看最終結果' : '→ 下一位學生') : (isLast ? '🏆 See Final Results' : '→ Next Student');
+
+  card.innerHTML = `
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="flex flex-col items-center text-center p-6 rounded-2xl ${cardBg} transition-all duration-300">
+        <div class="char-face mb-3">${face}</div>
+        <div class="font-bold text-xl text-slate-900 mb-0.5">${LANG==='zh' ? c.name_zh : c.name_en}</div>
+        <div class="text-xs font-semibold text-slate-500 mb-3 tracking-wide">${LANG==='zh' ? c.subject_zh : c.subject_en}</div>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">${LANG==='zh' ? c.sit_zh : c.sit_en}</p>
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold ${zoneColor} transition-all duration-300">${zoneLabel}</div>
+        ${isFlow && !sim.solved ? `<div class="mt-4 text-xs text-emerald-700 bg-emerald-100/80 px-4 py-2 rounded-xl leading-relaxed">${LANG==='zh' ? c.hint_zh : c.hint_en}</div>` : ''}
+      </div>
+
+      <div class="flex flex-col justify-center gap-5">
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-bold text-slate-500 tracking-widest uppercase">${LANG==='zh' ? '技能水準（固定）' : 'Skill Level (Fixed)'}</span>
+            <span class="text-sm font-bold text-indigo-600">${c.skill} / 10</span>
+          </div>
+          <div class="flex gap-1">
+            ${Array.from({length:10},(_,i)=>`<div class="flex-1 h-3 rounded-full ${i<c.skill?'bg-indigo-400':'bg-slate-200'}"></div>`).join('')}
+          </div>
         </div>
-        <span class="text-xl font-bold ${c.text}">${rating} / 9</span>
+
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-bold text-slate-500 tracking-widest uppercase">${LANG==='zh' ? '挑戰難度（你來調）' : 'Challenge Level (You Control)'}</span>
+            <span class="text-sm font-bold ${zone==='flow'?'text-emerald-600':zone==='boredom'?'text-blue-600':'text-red-600'}">${sim.challenge} / 10</span>
+          </div>
+          <input type="range" min="1" max="10" value="${sim.challenge}"
+            class="challenge-slider w-full"
+            oninput="onSlider(this.value)"
+            ${sim.solved ? 'disabled' : ''}
+          >
+        </div>
+
+        <div>
+          <div class="text-xs font-bold text-slate-500 mb-2 tracking-widest uppercase">${LANG==='zh' ? '心流地圖' : 'Flow Map'}</div>
+          <div class="zone-track">
+            ${borePct>0  ? `<div class="zone-seg zone-boring"  style="width:${borePct}%">${LANG==='zh'?'😴 無聊':'😴 Boring'}</div>` : ''}
+            <div class="zone-seg zone-flow" style="width:${flowPct}%">${LANG==='zh'?'🌊 心流':'🌊 Flow'}</div>
+            ${anxPct>0   ? `<div class="zone-seg zone-anxiety" style="width:${anxPct}%">${LANG==='zh'?'😰 焦慮':'😰 Anxiety'}</div>` : ''}
+            <div class="zone-needle" style="left:calc(${needlePct}% - 2px)"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-400 mt-1 px-0.5">
+            <span>1</span><span>${LANG==='zh'?'← 太簡單 ／ 太難 →':'← Too easy ／ Too hard →'}</span><span>10</span>
+          </div>
+        </div>
+
+        ${isFlow && !sim.solved
+          ? `<button onclick="confirmFlow()" class="w-full py-3 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-bold shadow-lg shadow-emerald-500/30 transition-all">
+               ${LANG==='zh' ? '✓ 這就是心流區，確認！' : '✓ This is the Flow Zone — Confirm!'}
+             </button>`
+          : sim.solved
+          ? `<button onclick="nextCase()" class="w-full py-3 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-bold shadow-lg shadow-indigo-500/30 transition-all">
+               ${nextLabel}
+             </button>`
+          : ''
+        }
       </div>
-      <div class="flex gap-1 mb-1">
-        ${[1,2,3,4,5,6,7,8,9].map(n => `
-          <div class="flex-1 h-3 rounded-full ${n <= rating ? c.fill : c.bg}"></div>
-        `).join('')}
-      </div>
-      <div class="flex justify-between text-[10px] text-slate-400 mt-1">
-        <span>1</span><span>5</span><span>9</span>
-      </div>
-    `;
-    container.appendChild(row);
-  });
+    </div>`;
+
+  updateProgress();
 }
 
-function renderInterpretation() {
-  const r = STATE.ratings;
-  const idealEasy = r.easy <= 3;
-  const idealFlow = r.flow >= 3 && r.flow <= 7;
-  const idealHard = r.hard >= 6;
-  const topicName = LANG === 'zh' ? STATE.topic.topic_zh : STATE.topic.topic_en;
+function onSlider(val) {
+  sim.challenge = parseInt(val);
+  sim.solved = false;
+  renderCase();
+}
 
-  let html = '';
-  const sub = document.getElementById('resultSubtitle');
-  if (idealEasy && idealFlow && idealHard) {
-    sub.textContent = LANG === 'zh'
-      ? `主題:${topicName} · 完美對稱的心流剖面`
-      : `Topic: ${topicName} · A textbook flow profile`;
+function confirmFlow() {
+  sim.solved = true;
+  sim.completed.add(sim.idx);
+  renderCase();
+}
+
+function nextCase() {
+  sim.idx++;
+  sim.solved = false;
+  if (sim.idx < CASES.length) {
+    sim.challenge = CASES[sim.idx].startChallenge;
+    renderCase();
   } else {
-    sub.textContent = LANG === 'zh' ? `主題:${topicName}` : `Topic: ${topicName}`;
+    document.getElementById('caseCard').innerHTML = '';
+    document.getElementById('completionScreen').classList.remove('hidden');
+    spawnConfetti();
   }
-
-  if (LANG === 'zh') {
-    if (idealEasy && idealFlow && idealHard) {
-      html = `<strong class="text-emerald-700">完美的對稱剖面。</strong><br><br>你在無聊版本感到無聊(${r.easy}/9)、在焦慮版本感到焦慮(${r.hard}/9),而心流版本恰好落在中間(${r.flow}/9)。這正是 Csikszentmihalyi (1990) 模型所預測的反應:<strong>挑戰水準是客觀變項,但「心流」是主觀體驗——而你的主觀體驗精準對應到了客觀結構</strong>。<br><br>這個體驗本身就是課程的核心訊息——同一個主題「${topicName}」可以是無聊、心流、或焦慮,差別不在主題,而在挑戰水準的調適。`;
-    } else if (r.flow < r.easy && r.flow < r.hard) {
-      html = `<strong class="text-emerald-700">心流版本是你最舒適的位置。</strong><br><br>你給心流版本的分數(${r.flow})反而比無聊版本(${r.easy})和焦慮版本(${r.hard})都低。這暗示你對「${topicName}」這個主題的<strong>實際技能水準比預設的還高</strong>——被設定為「剛剛好略高」的內容,對你來說其實還是太輕鬆了。<br><br>這正是 Engeser 與 Rheinberg (2008) 強調的「動態性」:心流區的位置會隨個人技能而移動。下次可以挑一個你比較陌生的主題試試。`;
-    } else if (r.easy >= 5) {
-      html = `<strong class="text-emerald-700">「太簡單」反而讓你不耐煩?</strong><br><br>無聊版本的評分(${r.easy}/9)偏高,這意味著「過於幼稚」對你引發的不是放鬆,而是<em>不耐煩</em>。這是心流模型中一個重要的個體差異——對成就動機強的學習者而言,過低的挑戰會誘發類似焦慮的不適感 (Engeser & Rheinberg, 2008)。<br><br>教學上的啟示:對這類學生,「降低難度當鼓勵」其實會適得其反。`;
-    } else if (r.hard <= 4) {
-      html = `<strong class="text-emerald-700">高焦慮閾值。</strong><br><br>即使是刻意拉高難度的焦慮版本,你的評分(${r.hard}/9)仍然不算高。可能的原因:你對「${topicName}」的<strong>實際先備知識比預設的更深厚</strong>,所以「術語堆疊」對你來說只是「正常閱讀」而非「資訊超載」。<br><br>這個現象在 Sweller (1988) 的認知負荷理論裡稱為「expertise reversal effect」——同樣的鷹架對新手是支持,對專家反而冗餘。`;
-    } else if (r.flow > r.hard) {
-      html = `<strong class="text-emerald-700">心流版本比焦慮版本更累?</strong><br><br>你給心流版本的分數(${r.flow})甚至高於焦慮版本(${r.hard})。一種可能是版本順序帶來的<em>練習效應</em>——讀到第三個版本時,你已經熟悉了主題,對「焦慮版本」的反應反而緩和了。<br><br>這提醒我們:心流體驗會受先備經驗、閱讀順序、當下精神狀態等多種變項影響,並非單純的「難度 → 體驗」線性對應。`;
-    } else {
-      html = `<strong class="text-emerald-700">你的剖面呈現心流模型的典型方向。</strong><br><br>無聊版(${r.easy})→ 心流版(${r.flow})→ 焦慮版(${r.hard})的評分方向,符合 Csikszentmihalyi (1990) 的預測。雖然不完全對稱,但你能感受到三個版本之間的<strong>明顯差異</strong>——這就是這個實驗想證明的事:<em>同一個主題,挑戰水準才是決定學習體驗的關鍵</em>。<br><br>而 AI 在這裡扮演的角色是:讓「動態挑戰—技能對應」(Engeser & Rheinberg, 2008) 從「研究者預先準備好的多版本教材」變成「即時生成、無限可調」。`;
-    }
-  } else {
-    if (idealEasy && idealFlow && idealHard) {
-      html = `<strong class="text-emerald-700">A perfect symmetric profile.</strong><br><br>You rated the easy version as boring (${r.easy}/9), the hard version as anxious (${r.hard}/9), and the flow version exactly in the middle (${r.flow}/9). This is the response pattern Csikszentmihalyi's (1990) model predicts: <strong>challenge level is objective, but flow is subjective — and your subjective experience aligned precisely with the objective structure</strong>.<br><br>This experience itself is the lesson: the same topic "${topicName}" can be boring, flow, or anxiety. The difference is not in the topic, but in how challenge is tuned.`;
-    } else if (r.flow < r.easy && r.flow < r.hard) {
-      html = `<strong class="text-emerald-700">The flow version was your most comfortable.</strong><br><br>You rated the flow version (${r.flow}) lower than both the easy (${r.easy}) and hard (${r.hard}) versions. This suggests your <strong>actual skill on "${topicName}" exceeds what was assumed</strong> — what was calibrated as "just slightly above" was still too easy for you.<br><br>This is exactly the "dynamic" character emphasized by Engeser and Rheinberg (2008): the flow zone moves with personal skill. Next time, try a topic less familiar to you.`;
-    } else if (r.easy >= 5) {
-      html = `<strong class="text-emerald-700">"Too easy" makes you restless?</strong><br><br>Your rating on the easy version (${r.easy}/9) ran high. This means under-challenge for you triggers <em>impatience</em>, not relaxation. This is a known individual difference within the flow model — for learners high in achievement motivation, low challenge produces an anxiety-like discomfort (Engeser & Rheinberg, 2008).<br><br>Teaching implication: lowering difficulty as "encouragement" can backfire for such students.`;
-    } else if (r.hard <= 4) {
-      html = `<strong class="text-emerald-700">A high anxiety threshold.</strong><br><br>Even the deliberately difficult version stayed moderate for you (${r.hard}/9). A likely reason: your <strong>real prior knowledge of "${topicName}" exceeds the default assumption</strong>, so "stacked jargon" reads as "normal" rather than "overload."<br><br>This is what Sweller (1988) called the "expertise reversal effect" — the same scaffolding that supports a novice is redundant for an expert.`;
-    } else if (r.flow > r.hard) {
-      html = `<strong class="text-emerald-700">The flow version felt harder than the hard one?</strong><br><br>You rated the flow version (${r.flow}) higher than the hard version (${r.hard}). One possibility is a <em>practice effect</em> from card order — by the time you reached the third card, you were already familiar with the topic, dampening your response to the hard version.<br><br>This reminds us: flow experience is shaped by prior exposure, reading order, and momentary state — not a simple linear function of difficulty.`;
-    } else {
-      html = `<strong class="text-emerald-700">Your profile follows the predicted direction.</strong><br><br>The trend easy (${r.easy}) → flow (${r.flow}) → hard (${r.hard}) matches Csikszentmihalyi's (1990) prediction. Although not perfectly symmetric, the <strong>clear contrast among versions</strong> is what this experiment aims to show: <em>for the same topic, challenge level — not content — is what shapes the learning experience</em>.<br><br>AI's role here is to turn the "dynamic challenge–skill matching" emphasized by Engeser and Rheinberg (2008) from "researcher-prepared multi-versions" into "real-time, infinitely tunable" content.`;
-    }
-  }
-
-  document.getElementById('interpretation').innerHTML = html;
+  updateProgress();
+  document.getElementById('sim-section').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
-function resetLab() {
-  STATE.topic = null;
-  STATE.versions = null;
-  STATE.ratings = { easy: null, flow: null, hard: null };
-  STATE.shuffled = null;
-  showStep(1);
-  window.scrollTo({ top: document.getElementById('lab-section').offsetTop - 80, behavior: 'smooth' });
+function updateProgress() {
+  const done = sim.completed.size;
+  document.getElementById('progressBar').style.width = (done/CASES.length*100)+'%';
+  document.getElementById('progressText').textContent = done+' / '+CASES.length;
 }
 
+function spawnConfetti() {
+  const container = document.getElementById('confettiContainer');
+  if (!container) return;
+  container.innerHTML = '';
+  const colors = ['#10b981','#6366f1','#f59e0b','#ef4444','#3b82f6','#ec4899'];
+  for (let i=0; i<40; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*30}%;background:${colors[i%colors.length]};animation-delay:${Math.random()*.6}s;animation-duration:${.7+Math.random()*.6}s`;
+    container.appendChild(el);
+  }
+}
+
+function resetSim() {
+  sim = { idx: 0, challenge: CASES[0].startChallenge, completed: new Set(), solved: false };
+  document.getElementById('completionScreen').classList.add('hidden');
+  renderCase();
+}
+
+// ── Init ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  positionLangIndicator();
-  renderTopicGrid();
-  showStep(1);
+  positionIndicator();
+  renderCase();
 });
-window.addEventListener('load', positionLangIndicator);
-window.addEventListener('resize', positionLangIndicator);
+window.addEventListener('load', positionIndicator);
+window.addEventListener('resize', positionIndicator);
 </script>
-
 </body>
 </html>
