@@ -342,7 +342,131 @@ body.lang-en li[data-lang="en"] { display: list-item; }
   </div>
 </section>
 
-<!-- ⑤ SIMULATOR -->
+<!-- ⑤ CASE STUDY : Jenova Chen / flOw -->
+<section class="mb-8">
+  <div class="rounded-3xl p-6 sm:p-10 shadow-xl animate-slide-up"
+    style="background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 50%, #eff6ff 100%); border: 1px solid rgba(20,184,166,.2);">
+
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-2xl bg-teal-100 flex items-center justify-center text-teal-600 text-xl">🕹️</div>
+      <div>
+        <div class="text-xs font-semibold text-teal-600 tracking-widest uppercase">Case Study</div>
+        <h2 class="font-display text-2xl font-semibold text-slate-900">
+          <span data-lang="zh">心流理論的遊戲實踐：陳星漢與 flOw</span>
+          <span data-lang="en">Flow Theory in Games: Jenova Chen &amp; flOw</span>
+        </h2>
+      </div>
+    </div>
+
+    <!-- Intro -->
+    <div class="prose-flow mb-8">
+      <p data-lang="zh">2006 年，一位來自上海、就讀<strong>南加州大學（USC）</strong>互動媒體所的研究生陳星漢（Jenova Chen）讀完 Csikszentmihalyi 的心流理論後，問了一個問題：<strong>「如果遊戲的難度能自動配合每位玩家的能力，是否每個人都能進入心流？」</strong>他把這個問題，做成了一款遊戲作為碩士論文答案。</p>
+      <p data-lang="en">In 2006, Jenova Chen — a graduate student from Shanghai at <strong>USC's</strong> Interactive Media program — finished reading Csikszentmihalyi and asked: <strong>"If a game's difficulty could automatically match each player's skill, could everyone experience flow?"</strong> He built a game as his answer — his master's thesis.</p>
+    </div>
+
+    <!-- Problem → Solution → Impact -->
+    <div class="grid sm:grid-cols-3 gap-4 mb-8">
+      <div class="p-5 rounded-2xl bg-white/70 border border-red-200/70">
+        <div class="text-2xl mb-3">😫</div>
+        <div class="font-bold text-red-600 text-sm mb-2">
+          <span data-lang="zh">傳統遊戲（教材）的困境</span>
+          <span data-lang="en">The Problem</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed" data-lang="zh">難度固定。高手覺得無聊、新手覺得太難，幾乎沒有人剛好落在心流區——跟固定難度的教材一模一樣。</p>
+        <p class="text-xs text-slate-600 leading-relaxed" data-lang="en">Fixed difficulty. Experts get bored, beginners feel overwhelmed — almost no one lands in the flow zone. Just like a fixed-difficulty worksheet.</p>
+      </div>
+      <div class="p-5 rounded-2xl bg-white/70 border border-teal-300">
+        <div class="text-2xl mb-3">💡</div>
+        <div class="font-bold text-teal-700 text-sm mb-2">
+          <span data-lang="zh">陳星漢的解法：DDA</span>
+          <span data-lang="en">Chen's Solution: DDA</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed" data-lang="zh"><strong>動態難度調整（DDA）</strong>：不告訴玩家選難度，而是讓遊戲偵測玩家行為，讓玩家下意識地把自己調到心流區（Chen, 2006）。</p>
+        <p class="text-xs text-slate-600 leading-relaxed" data-lang="en"><strong>Dynamic Difficulty Adjustment (DDA):</strong> instead of asking players to pick difficulty, the game detects behaviour, letting players unconsciously self-calibrate into their flow zone (Chen, 2006).</p>
+      </div>
+      <div class="p-5 rounded-2xl bg-white/70 border border-emerald-200/70">
+        <div class="text-2xl mb-3">🏆</div>
+        <div class="font-bold text-emerald-700 text-sm mb-2">
+          <span data-lang="zh">結果</span>
+          <span data-lang="en">Result</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed" data-lang="zh">遊戲發布後 Sony 主動邀請移植至 PlayStation。陳星漢創立 thatgamecompany，以心流理論為核心持續創作，被媒體稱為「遊戲界的心流設計師」。</p>
+        <p class="text-xs text-slate-600 leading-relaxed" data-lang="en">Sony invited Chen to port it to PlayStation. He founded thatgamecompany, continuing flow-centered design — dubbed by media as "the flow designer of games."</p>
+      </div>
+    </div>
+
+    <!-- How flOw works -->
+    <div class="mb-8 p-5 rounded-2xl bg-white/60 border border-teal-200/60">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl shrink-0">🌊</span>
+        <div>
+          <div class="font-bold text-slate-800 text-sm mb-2">
+            <span data-lang="zh">flOw 如何把心流理論「做進遊戲」</span>
+            <span data-lang="en">How flOw Embeds Flow Theory</span>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed" data-lang="zh">玩家扮演一隻在深海漂浮的微生物。往<strong>深處游 → 遭遇更強的對手</strong>（挑戰提升）；往<strong>淺處游 → 回到安全水域</strong>（挑戰降低）。遊戲從不說「這是難度選擇」——玩家純靠直覺，下意識地找到屬於自己的心流區。這正是 Csikszentmihalyi（1990）所說的：真正的心流是學習者主動找到那個「剛好的位置」。</p>
+          <p class="text-sm text-slate-600 leading-relaxed" data-lang="en">Players control a microorganism drifting through deep sea. <strong>Swim deeper → face stronger predators</strong> (challenge rises); <strong>swim shallower → return to safe waters</strong> (challenge drops). The game never says "pick your difficulty" — players follow instinct, unconsciously finding their own flow zone. This is exactly what Csikszentmihalyi (1990) meant: flow is reached when learners actively find their "just right" place.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="mb-8">
+      <div class="text-xs font-bold text-slate-400 tracking-widest uppercase mb-4">
+        <span data-lang="zh">從論文到影響力：thatgamecompany 作品歷程</span>
+        <span data-lang="en">From Thesis to Impact: thatgamecompany Timeline</span>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="p-4 rounded-xl bg-white/80 border border-teal-200/60 text-center">
+          <div class="text-2xl mb-1">🦠</div>
+          <div class="font-bold text-teal-700 text-sm">flOw</div>
+          <div class="text-[11px] text-slate-400 mb-2">2006 · USC 碩士論文</div>
+          <p class="text-[11px] text-slate-500" data-lang="zh">動態難度的概念驗證，免費網頁遊戲</p>
+          <p class="text-[11px] text-slate-500" data-lang="en">DDA proof of concept, free web game</p>
+        </div>
+        <div class="p-4 rounded-xl bg-white/80 border border-teal-200/60 text-center">
+          <div class="text-2xl mb-1">🎮</div>
+          <div class="font-bold text-teal-700 text-sm">flOw PS3</div>
+          <div class="text-[11px] text-slate-400 mb-2">2007 · PlayStation Network</div>
+          <p class="text-[11px] text-slate-500" data-lang="zh">Sony 主動邀請，論文變成商業產品</p>
+          <p class="text-[11px] text-slate-500" data-lang="en">Sony invite; thesis becomes commercial product</p>
+        </div>
+        <div class="p-4 rounded-xl bg-white/80 border border-teal-200/60 text-center">
+          <div class="text-2xl mb-1">🌸</div>
+          <div class="font-bold text-teal-700 text-sm">Flower</div>
+          <div class="text-[11px] text-slate-400 mb-2">2009 · 情感沉浸</div>
+          <p class="text-[11px] text-slate-500" data-lang="zh">無失敗機制，純粹體驗心流狀態</p>
+          <p class="text-[11px] text-slate-500" data-lang="en">No fail state — pure flow immersion</p>
+        </div>
+        <div class="p-4 rounded-xl bg-white/80 border border-teal-200/60 text-center">
+          <div class="text-2xl mb-1">🏜️</div>
+          <div class="font-bold text-teal-700 text-sm">Journey</div>
+          <div class="text-[11px] text-slate-400 mb-2">2012 · 獲獎無數</div>
+          <p class="text-[11px] text-slate-500" data-lang="zh">公認遊戲史上最能讓人進入心流的作品</p>
+          <p class="text-[11px] text-slate-500" data-lang="en">Widely cited as the most flow-inducing game ever made</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connection to learning -->
+    <div class="p-5 rounded-2xl bg-gradient-to-br from-indigo-50/80 to-teal-50/80 border border-indigo-200/50">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl shrink-0">🔗</span>
+        <div>
+          <div class="font-bold text-slate-800 text-sm mb-2">
+            <span data-lang="zh">這與學習設計有什麼關係？</span>
+            <span data-lang="en">What does this mean for learning design?</span>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed" data-lang="zh">陳星漢在遊戲中解決的問題，正是現代教育設計面對的核心挑戰：<strong>如何讓不同程度的學習者，在同一個環境中各自找到心流區？</strong>他的答案是「讓學習者無意識地自我調適」。今天 AI 自適應學習正在嘗試同樣的事——把「深海深淺」換成「題目難易度」，把「微生物的游向」換成「學習者的答題行為」。</p>
+          <p class="text-sm text-slate-600 leading-relaxed" data-lang="en">The problem Chen solved in games is the core challenge of modern education: <strong>How can learners of all levels each find their own flow zone in the same environment?</strong> His answer: unconscious self-calibration. Today's AI adaptive learning attempts exactly the same — replacing "ocean depth" with "question difficulty," and "the organism's movement" with "learner response patterns."</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ⑥ SIMULATOR -->
 <section class="mb-10" id="sim-section">
   <div class="glass rounded-3xl p-6 sm:p-10 shadow-2xl shadow-emerald-500/10 border-2 border-emerald-200/40">
     <div class="flex items-center gap-3 mb-2">
@@ -424,6 +548,9 @@ body.lang-en li[data-lang="en"] { display: list-item; }
       </div>
     </div>
     <ol class="space-y-4 text-sm text-slate-600 leading-relaxed">
+      <li class="pl-6 -indent-6 pb-4 border-b border-slate-200/50">
+        <span class="text-slate-900 font-medium">Chen, J.</span> (2006). <em>Flow in games</em> (Master's thesis, University of Southern California). Retrieved from https://www.jenovachen.com/flowingames/Flow_in_games_final.pdf
+      </li>
       <li class="pl-6 -indent-6 pb-4 border-b border-slate-200/50">
         <span class="text-slate-900 font-medium">Chou, Y. K.</span> (2015). <em>Actionable gamification: Beyond points, badges, and leaderboards.</em> Octalysis Media.
       </li>
